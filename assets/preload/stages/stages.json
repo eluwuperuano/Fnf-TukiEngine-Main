@@ -1,0 +1,13 @@
+{
+   "defaultCamZoom":0.9,
+   
+   "boyfriend": [770, 100],
+   "girlfriend": [400, 130],
+   "opponent": [100, 100],
+
+   "object0": "stageback, [-600, -200]",
+
+   "object1": "stagefront, [-650, 600]",
+
+   "object2": "stagecurtains, [-650, 600]"
+}
