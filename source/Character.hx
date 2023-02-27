@@ -551,6 +551,8 @@ class Character extends FlxSprite
 				playAnim('idle');
 
 				flipX = true;
+			default:
+				parseDataFile();
 		}
 
 		dance();
@@ -776,4 +778,75 @@ class Character extends FlxSprite
 		frames = tex;
 		
 	}
+
+	function parseDataFile()
+	{
+		var jsonData = Paths.characterjson('json/${curCharacter}');
+
+		var data:CharacterData = cast jsonData;
+
+		var tex:FlxAtlasFrames = Paths.getSparrowAtlas(data.asset, 'shared');
+		frames = tex;
+		if (frames != null)
+			for (anim in data.animations)
+			{
+				var frameRate = anim.frameRate == null ? 24 : anim.frameRate;
+				var looped = anim.looped == null ? false : anim.looped;
+				var flipX = anim.flipX == null ? false : anim.flipX;
+				var flipY = anim.flipY == null ? false : anim.flipY;
+
+				if (anim.frameIndices != null)
+				{
+					animation.addByIndices(anim.name, anim.prefix, anim.frameIndices, "", frameRate, looped, flipX, flipY);
+				}
+				else
+				{
+					animation.addByPrefix(anim.name, anim.prefix, frameRate, looped, flipX, flipY);
+				}
+
+				animOffsets[anim.name] = anim.offsets == null ? [0, 0] : anim.offsets;
+			}
+
+		barColor = data.barColor;
+
+		playAnim(data.startingAnim);
+	}
+}
+
+typedef CharacterData =
+{
+	var name:String;
+	var asset:String;
+	var startingAnim:String;
+
+	/**
+	 * The color of this character's health bar.
+	 */
+	var barColor:FlxColor;
+
+	var animations:Array<AnimationData>;
+}
+
+typedef AnimationData =
+{
+	var name:String;
+	var prefix:String;
+	var ?offsets:Array<Int>;
+
+	/**
+	 * Whether this animation is looped.
+	 * @default false
+	 */
+	var ?looped:Bool;
+
+	var ?flipX:Bool;
+	var ?flipY:Bool;
+
+	/**
+	 * The frame rate of this animation.
+	 		* @default 24
+	 */
+	var ?frameRate:Int;
+
+	var ?frameIndices:Array<Int>;
 }

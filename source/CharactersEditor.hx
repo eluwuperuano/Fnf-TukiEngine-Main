@@ -1,5 +1,6 @@
 package;
 
+import flixel.ui.FlxButton;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
@@ -17,7 +18,7 @@ using StringTools;
 /**
 	*DEBUG MODE
  */
-class AnimationDebug extends FlxState
+class CharactersEditor extends FlxState
 {
 	var bf:Boyfriend;
 	var dad:Character;
@@ -29,6 +30,7 @@ class AnimationDebug extends FlxState
 	var isDad:Bool = true;
 	var daAnim:String = 'spooky';
 	var camFollow:FlxObject;
+	var savecharacter:FlxButton;
 
 	public function new(daAnim:String = 'spooky')
 	{
@@ -39,6 +41,12 @@ class AnimationDebug extends FlxState
 	override function create()
 	{
 		FlxG.sound.music.stop();
+
+		savecharacter = new FlxButton(100, 10, 'Save', function()
+		{
+			characterSaveButtom();
+		});
+		add(savecharacter);
 
 		var gridBG:FlxSprite = FlxGridOverlay.create(10, 10);
 		gridBG.scrollFactor.set(0.5, 0.5);
@@ -195,23 +203,22 @@ class AnimationDebug extends FlxState
 			char.playAnim(animList[curAnim]);
 		}
 
-		if (FlxG.keys.justPressed.ESCAPE)
-		{
-			var outputString:String = "";
-
-			for (swagAnim in animList)
-			{
-				outputString += swagAnim + " " + char.animOffsets.get(swagAnim)[0] + " " + char.animOffsets.get(swagAnim)[1] + "\n";
-			}
-
-			outputString.trim();
-			saveOffsets(outputString);
-		}
-
 		super.update(elapsed);
 	}
 
 	var _file:FileReference;
+
+	function characterSaveButtom() {
+		var outputString:String = "";
+
+		for (swagAnim in animList)
+		{
+			outputString += swagAnim + " " + char.animOffsets.get(swagAnim)[0] + " " + char.animOffsets.get(swagAnim)[1] + "\n";
+		}
+
+		outputString.trim();
+		saveOffsets(outputString);
+	}
 
 	private function saveOffsets(saveString:String)
 	{

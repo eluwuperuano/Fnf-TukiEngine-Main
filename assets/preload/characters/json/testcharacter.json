@@ -1,8 +1,8 @@
 {
+    "name": "Test Character",
     "directori": "characters/GF_assets",
     "startingAnim": "danceRight",
-    "barColor": "#A5004D",
-    "noteColor": ["A5004D", "A5004D", "A5004D", "0xffA5004D"],
+    "barColor": "0xffA5004D",
     "animations": [
         {
           "name": "singLEFT",
