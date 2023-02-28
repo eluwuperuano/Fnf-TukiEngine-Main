@@ -1,0 +1,85 @@
+{
+    "image": "characters/mom_dad_christmas_assets",
+    "scale": 1,
+    "flip_x": false,
+    "animations": [
+    {
+        "anim": "idle",
+        "name": "Parent Christmas Idle",
+        "fps": 24,
+        "loop": false,
+        "indices": [],
+        "offsets": [0, 0]
+    },
+    {
+        "anim": "singUP",
+        "name": "Parent Up Note Dad",
+        "fps": 24,
+        "loop": false,
+        "indices": [],
+        "offsets": [-47, 24]
+    },
+    {
+        "anim": "singLEFT",
+        "name": "Parent Left Note Dad",
+        "fps": 24,
+        "loop": false,
+        "indices": [],
+        "offsets": [-30, 16]
+    },
+    {
+        "anim": "singRIGHT",
+        "name": "Parent Right Note Dad",
+        "fps": 24,
+        "loop": false,
+        "indices": [],
+        "offsets": [-1, -23]
+    },
+    {
+        "anim": "singDOWN",
+        "name": "Parent Down Note Dad",
+        "fps": 24,
+        "loop": false,
+        "indices": [],
+        "offsets": [-31, -29]
+    },
+    {
+        "anim": "singUP-alt",
+        "name": "Parent Up Note Mom",
+        "fps": 24,
+        "loop": false,
+        "indices": [],
+        "offsets": [-47, 24]
+    },
+    {
+        "anim": "singLEFT-alt",
+        "name": "Parent Left Note Mom",
+        "fps": 24,
+        "loop": false,
+        "indices": [],
+        "offsets": [-30, 15]
+    },
+    {
+        "anim": "singRIGHT-alt",
+        "name": "Parent Right Note Mom",
+        "fps": 24,
+        "loop": false,
+        "indices": [],
+        "offsets": [-1, -24]
+    },
+    {
+        "anim": "singDOWN-alt",
+        "name": "Parent Down Note Mom",
+        "fps": 24,
+        "loop": false,
+        "indices": [],
+        "offsets": [-30, -27]
+    }],
+    "healthbar_colors": "#ac40b8",
+    "note_colors": ["#ac40b8", "#ac40b8", "#ac40b8", "#ac40b8"],
+    "startingAnim": "idle",
+    "healthicon": "parents",
+    "antialiasing": true,
+    "character_position": [0, 0],
+    "camera_position": [-500, 0]
+}

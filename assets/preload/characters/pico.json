@@ -1,0 +1,53 @@
+{
+    "image": "characters/Pico_FNF_assetss",
+    "scale": 1,
+    "flip_x": true,
+    "animations": [
+    {
+        "anim": "idle",
+        "name": "Pico Idle Dance",
+        "fps": 24,
+        "loop": false,
+        "indices": [],
+        "offsets": [0, 0]
+    },
+    {
+        "anim": "singUP",
+        "name": "pico Up note0",
+        "fps": 24,
+        "loop": false,
+        "indices": [],
+        "offsets": [-29, 27]
+    },
+    {
+        "anim": "singLEFT",
+        "name": "Pico Note Right0",
+        "fps": 24,
+        "loop": false,
+        "indices": [],
+        "offsets": [65, 9]
+    },
+    {
+        "anim": "singRIGHT",
+        "name": "Pico NOTE LEFT0",
+        "fps": 24,
+        "loop": false,
+        "indices": [],
+        "offsets": [-68, -7]
+    },
+    {
+        "anim": "singDOWN",
+        "name": "Pico Down Note0",
+        "fps": 24,
+        "loop": false,
+        "indices": [],
+        "offsets": [200, -70]
+    }],
+    "healthbar_colors": "#b7d855",
+    "note_colors": ["#b7d855", "#b7d855", "#b7d855", "#b7d855"],
+    "startingAnim": "idle",
+    "healthicon": "pico",
+    "antialiasing": true,
+    "character_position": [0, 300],
+    "camera_position": [600, 0]
+}

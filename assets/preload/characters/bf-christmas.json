@@ -1,0 +1,93 @@
+{
+    "image": "characters/bfChristmas",
+    "scale": 1,
+    "flip_x": true,
+    "animations": [
+    {
+        "anim": "idle",
+        "name": "BF idle dance",
+        "fps": 24,
+        "loop": false,
+        "indices": [],
+        "offsets": [-5, 0]
+    },
+    {
+        "anim": "singUP",
+        "name": "BF NOTE UP0",
+        "fps": 24,
+        "loop": false,
+        "indices": [],
+        "offsets": [-29, 27]
+    },
+    {
+        "anim": "singLEFT",
+        "name": "BF NOTE LEFT0",
+        "fps": 24,
+        "loop": false,
+        "indices": [],
+        "offsets": [12, -6]
+    },
+    {
+        "anim": "singRIGHT",
+        "name": "BF NOTE RIGHT0",
+        "fps": 24,
+        "loop": false,
+        "indices": [],
+        "offsets": [-38, -7]
+    },
+    {
+        "anim": "singDOWN",
+        "name": "BF NOTE DOWN0",
+        "fps": 24,
+        "loop": false,
+        "indices": [],
+        "offsets": [-10, -50]
+    },
+    {
+        "anim": "singUPmiss",
+        "name": "BF NOTE UP MISS",
+        "fps": 24,
+        "loop": false,
+        "indices": [],
+        "offsets": [-29, 27]
+    },
+    {
+        "anim": "singLEFTmiss",
+        "name": "BF NOTE LEFT MISS",
+        "fps": 24,
+        "loop": false,
+        "indices": [],
+        "offsets": [12, 24]
+    },
+    {
+        "anim": "singRIGHTmiss",
+        "name": "BF NOTE RIGHT MISS",
+        "fps": 24,
+        "loop": false,
+        "indices": [],
+        "offsets": [-30, 21]
+    },
+    {
+        "anim": "singDOWNmiss",
+        "name": "BF NOTE DOWN MISS",
+        "fps": 24,
+        "loop": false,
+        "indices": [],
+        "offsets": [-11, -19]
+    },
+    {
+        "anim": "hey",
+        "name": "BF HEY",
+        "fps": 24,
+        "loop": false,
+        "indices": [],
+        "offsets": [7, 4]
+    }],
+    "healthbar_colors": "#31B0D1",
+    "note_colors": ["#D400FF", "#00E5FF", "#2BFF00", "#FF0000"],
+    "startingAnim": "idle",
+    "healthicon": "bf",
+    "antialiasing": true,
+    "character_position": [0, 0],
+    "camera_position": [0, 350]
+}

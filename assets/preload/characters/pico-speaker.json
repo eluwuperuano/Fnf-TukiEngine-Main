@@ -1,0 +1,45 @@
+{
+    "image": "characters/picoSpeaker",
+    "scale": 1,
+    "flip_x": false,
+    "animations": [
+    {
+        "anim": "shoot1",
+        "name": "Pico shoot 1",
+        "fps": 24,
+        "loop": false,
+        "indices": [],
+        "offsets": [0, 0]
+    },
+    {
+        "anim": "shoot2",
+        "name": "Pico shoot 2",
+        "fps": 24,
+        "loop": false,
+        "indices": [],
+        "offsets": [-1, -128]
+    },
+    {
+        "anim": "shoot3",
+        "name": "Pico shoot 3",
+        "fps": 24,
+        "loop": false,
+        "indices": [],
+        "offsets": [412, -64]
+    },
+    {
+        "anim": "shoot4",
+        "name": "Pico shoot 4",
+        "fps": 24,
+        "loop": false,
+        "indices": [],
+        "offsets": [439, -19]
+    }],
+    "healthbar_colors": "#b7d855",
+    "note_colors": ["#b7d855", "#b7d855", "#b7d855", "#b7d855"],
+    "startingAnim": "shoot1",
+    "healthicon": "pico",
+    "antialiasing": true,
+    "character_position": [0, 0],
+    "camera_position": [120, -125]
+}

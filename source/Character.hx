@@ -1,5 +1,8 @@
 package;
 
+import ui.AtlasText.Case;
+import openfl.utils.Assets;
+import haxe.Json;
 import Section.SwagSection;
 import flixel.FlxG;
 import flixel.FlxSprite;
@@ -17,13 +20,20 @@ class Character extends FlxSprite
 	public var debugMode:Bool = false;
 
 	public var isPlayer:Bool = false;
-	public var curCharacter:String = 'bf';
+	public var curCharacter:String = DEFAULT_CHARACTER;
 	public var barColor:FlxColor;
 
 	public var holdTimer:Float = 0;
 
 	public var animationNotes:Array<Dynamic> = [];
 
+	public var healthIcon:String = 'face';
+	public var jsonScale:Float = 1;
+
+	public var positionChar:Array<Float> = [0, 0];
+	public var cameraPosition:Array<Float> = [0, 0];
+
+	public static var DEFAULT_CHARACTER:String = 'bf'; //In case a character is missing, it will use BF on its place
 	public function new(x:Float, y:Float, ?character:String = "bf", ?isPlayer:Bool = false)
 	{
 		super(x, y);
@@ -38,521 +48,102 @@ class Character extends FlxSprite
 
 		switch (curCharacter)
 		{
-			case 'gf':
-				// GIRLFRIEND CODE
-				addImageCharacter('characters/GF_assets');
-				quickAnimAdd('cheer', 'GF Cheer');
-				quickAnimAdd('singLEFT', 'GF left note');
-				quickAnimAdd('singRIGHT', 'GF Right Note');
-				quickAnimAdd('singUP', 'GF Up Note');
-				quickAnimAdd('singDOWN', 'GF Down Note');
-				animation.addByIndices('sad', 'gf sad', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], "", 24, true);
-				animation.addByIndices('danceLeft', 'GF Dancing Beat', [30, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14], "", 24, false);
-				animation.addByIndices('danceRight', 'GF Dancing Beat', [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29], "", 24, false);
-				animation.addByIndices('hairBlow', "GF Dancing Beat Hair blowing", [0, 1, 2, 3], "", 24);
-				animation.addByIndices('hairFall', "GF Dancing Beat Hair Landing", [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], "", 24, false);
-				animation.addByPrefix('scared', 'GF FEAR', 24, true);
-
-				loadOffsetFile(curCharacter);
-				barColor = 0xffA5004D;
-
-					addColorsNote(0xffA5004D, 0xffA5004D, 0xffA5004D, 0xffA5004D);
-				
-
-				playAnim('danceRight');
-
-			case 'gf-christmas':
-				addImageCharacter('characters/gfChristmas');
-				quickAnimAdd('cheer', 'GF Cheer');
-				quickAnimAdd('singLEFT', 'GF left note');
-				quickAnimAdd('singRIGHT', 'GF Right Note');
-				quickAnimAdd('singUP', 'GF Up Note');
-				quickAnimAdd('singDOWN', 'GF Down Note');
-				animation.addByIndices('sad', 'gf sad', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], "", 24, false);
-				animation.addByIndices('danceLeft', 'GF Dancing Beat', [30, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14], "", 24, false);
-				animation.addByIndices('danceRight', 'GF Dancing Beat', [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29], "", 24, false);
-				animation.addByIndices('hairBlow', "GF Dancing Beat Hair blowing", [0, 1, 2, 3], "", 24);
-				animation.addByIndices('hairFall', "GF Dancing Beat Hair Landing", [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], "", 24, false);
-				animation.addByPrefix('scared', 'GF FEAR', 24, true);
-
-				loadOffsetFile(curCharacter);
-				barColor = 0xffA5004D;
-
-					addColorsNote(0xffA5004D, 0xffA5004D, 0xffA5004D, 0xffA5004D);
-				
-				playAnim('danceRight');
-			case 'gf-tankmen':
-				addImageCharacter('characters/gfTankmen');
-				animation.addByIndices('sad', 'GF Crying at Gunpoint', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], "", 24, true);
-				animation.addByIndices('danceLeft', 'GF Dancing at Gunpoint', [30, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14], "", 24, false);
-				animation.addByIndices('danceRight', 'GF Dancing at Gunpoint', [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29], "", 24, false);
-
-				barColor = 0xffA5004D;
-
-					addColorsNote(0xffA5004D, 0xffA5004D, 0xffA5004D, 0xffA5004D);
-
-				loadOffsetFile('gf');
-				playAnim('danceRight');
-
-			case 'bf-holding-gf':
-				addImageCharacter('characters/bfAndGF');
-				quickAnimAdd('idle', 'BF idle dance');
-				quickAnimAdd('singDOWN', 'BF NOTE DOWN0');
-				quickAnimAdd('singLEFT', 'BF NOTE LEFT0');
-				quickAnimAdd('singRIGHT', 'BF NOTE RIGHT0');
-				quickAnimAdd('singUP', 'BF NOTE UP0');
-
-				quickAnimAdd('singDOWNmiss', 'BF NOTE DOWN MISS');
-				quickAnimAdd('singLEFTmiss', 'BF NOTE LEFT MISS');
-				quickAnimAdd('singRIGHTmiss', 'BF NOTE RIGHT MISS');
-				quickAnimAdd('singUPmiss', 'BF NOTE UP MISS');
-				quickAnimAdd('bfCatch', 'BF catches GF');
-
-				loadOffsetFile(curCharacter);
-				barColor = 0xff6800a5;
-
-					addColorsNote(0xffA5004D, 0xFF00E5FF, 0xffA5004D, 0xFFFF0000);
-
-				playAnim('idle');
-
-				flipX = true;
-
-			case 'gf-car':
-				addImageCharacter('characters/gfCar');
-				animation.addByIndices('singUP', 'GF Dancing Beat Hair blowing CAR', [0], "", 24, false);
-				animation.addByIndices('danceLeft', 'GF Dancing Beat Hair blowing CAR', [30, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14], "", 24, false);
-				animation.addByIndices('danceRight', 'GF Dancing Beat Hair blowing CAR', [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29], "", 24,
-					false);
-				animation.addByIndices('idleHair', 'GF Dancing Beat Hair blowing CAR', [10, 11, 12, 25, 26, 27], "", 24, true);
-
-				loadOffsetFile(curCharacter);
-				barColor = 0xffA5004D;
-
-					addColorsNote(0xffA5004D, 0xffA5004D, 0xffA5004D, 0xffA5004D);
-
-				playAnim('danceRight');
-
-			case 'gf-pixel':
-				addImageCharacter('characters/gfPixel');
-				animation.addByIndices('singUP', 'GF IDLE', [2], "", 24, false);
-				animation.addByIndices('danceLeft', 'GF IDLE', [30, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14], "", 24, false);
-				animation.addByIndices('danceRight', 'GF IDLE', [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29], "", 24, false);
-
-				loadOffsetFile(curCharacter);
-				barColor = 0xffA5004D;
-
-					addColorsNote(0xffA5004D, 0xffA5004D, 0xffA5004D, 0xffA5004D);
-
-				playAnim('danceRight');
-
-				setGraphicSize(Std.int(width * PlayState.daPixelZoom));
-				updateHitbox();
-				antialiasing = false;
-
-			case 'dad':
-				// DAD ANIMATION LOADING CODE
-				addImageCharacter('characters/DADDY_DEAREST');
-				quickAnimAdd('idle', 'Dad idle dance');
-				quickAnimAdd('singUP', 'Dad Sing Note UP');
-				quickAnimAdd('singRIGHT', 'Dad Sing Note RIGHT');
-				quickAnimAdd('singDOWN', 'Dad Sing Note DOWN');
-				quickAnimAdd('singLEFT', 'Dad Sing Note LEFT');
-
-				loadOffsetFile(curCharacter);
-				barColor = 0xFFaf66ce;
-
-					addColorsNote(0xFFaf66ce, 0xFFaf66ce, 0xFFaf66ce, 0xFFaf66ce);
-
-				playAnim('idle');
-			case 'spooky':
-				addImageCharacter('characters/spooky_kids_assets');
-				quickAnimAdd('singUP', 'spooky UP NOTE');
-				quickAnimAdd('singDOWN', 'spooky DOWN note');
-				quickAnimAdd('singLEFT', 'note sing left');
-				quickAnimAdd('singRIGHT', 'spooky sing right');
-				animation.addByIndices('danceLeft', 'spooky dance idle', [0, 2, 6], "", 12, false);
-				animation.addByIndices('danceRight', 'spooky dance idle', [8, 10, 12, 14], "", 12, false);
-
-				loadOffsetFile(curCharacter);
-				barColor = 0xFFd57e00;
-
-					addColorsNote(0xFFB4B4B4, 0xFFd57e00, 0xFFB4B4B4, 0xFFd57e00);
-
-				playAnim('danceRight');
-			case 'mom':
-				addImageCharacter('characters/Mom_Assets');
-				quickAnimAdd('idle', "Mom Idle");
-				quickAnimAdd('singUP', "Mom Up Pose");
-				quickAnimAdd('singDOWN', "MOM DOWN POSE");
-				quickAnimAdd('singLEFT', 'Mom Left Pose');
-				// ANIMATION IS CALLED MOM LEFT POSE BUT ITS FOR THE RIGHT
-				// CUZ DAVE IS DUMB!
-				quickAnimAdd('singRIGHT', 'Mom Pose Left');
-
-				loadOffsetFile(curCharacter);
-				barColor = 0xFFd8558e;
-
-					addColorsNote(0xFFd8558e, 0xFFd8558e, 0xFFd8558e, 0xFFd8558e);
-
-				playAnim('idle');
-
-			case 'mom-car':
-				addImageCharacter('characters/momCar');
-				quickAnimAdd('idle', "Mom Idle");
-				quickAnimAdd('singUP', "Mom Up Pose");
-				quickAnimAdd('singDOWN', "MOM DOWN POSE");
-				quickAnimAdd('singLEFT', 'Mom Left Pose');
-				// ANIMATION IS CALLED MOM LEFT POSE BUT ITS FOR THE RIGHT
-				// CUZ DAVE IS DUMB!
-				quickAnimAdd('singRIGHT', 'Mom Pose Left');
-				animation.addByIndices('idleHair', "Mom Idle", [10, 11, 12, 13], "", 24, true);
-
-				loadOffsetFile(curCharacter);
-				barColor = 0xFFd8558e;
-
-					addColorsNote(0xFFd8558e, 0xFFd8558e, 0xFFd8558e, 0xFFd8558e);
-
-				playAnim('idle');
-			case 'monster':
-				addImageCharacter('characters/Monster_Assets');
-				quickAnimAdd('idle', 'monster idle');
-				quickAnimAdd('singUP', 'monster up note');
-				quickAnimAdd('singDOWN', 'monster down');
-				quickAnimAdd('singLEFT', 'Monster left note');
-				quickAnimAdd('singRIGHT', 'Monster Right note');
-
-				loadOffsetFile(curCharacter);
-				barColor = 0xFFf3ff6e;
-
-					addColorsNote(0xFFf3ff6e, 0xFFf3ff6e, 0xFFf3ff6e, 0xFFf3ff6e);
-
-				playAnim('idle');
-			case 'monster-christmas':
-				addImageCharacter('characters/monsterChristmas');
-				quickAnimAdd('idle', 'monster idle');
-				quickAnimAdd('singUP', 'monster up note');
-				quickAnimAdd('singDOWN', 'monster down');
-				quickAnimAdd('singLEFT', 'Monster left note');
-				quickAnimAdd('singRIGHT', 'Monster Right note');
-
-				loadOffsetFile(curCharacter);
-				barColor = 0xFFf3ff6e;
-
-					addColorsNote(0xFFf3ff6e, 0xFFf3ff6e, 0xFFf3ff6e, 0xFFf3ff6e);
-
-				playAnim('idle');
-			case 'pico':
-				addImageCharacter('characters/Pico_FNF_assetss');
-				quickAnimAdd('idle', "Pico Idle Dance");
-				quickAnimAdd('singUP', 'pico Up note0');
-				quickAnimAdd('singDOWN', 'Pico Down Note0');
-				if (isPlayer)
-				{
-					quickAnimAdd('singLEFT', 'Pico NOTE LEFT0');
-					quickAnimAdd('singRIGHT', 'Pico Note Right0');
-					quickAnimAdd('singRIGHTmiss', 'Pico Note Right Miss');
-					quickAnimAdd('singLEFTmiss', 'Pico NOTE LEFT miss');
-				}
-				else
-				{
-					// Need to be flipped! REDO THIS LATER!
-					quickAnimAdd('singLEFT', 'Pico Note Right0');
-					quickAnimAdd('singRIGHT', 'Pico NOTE LEFT0');
-					quickAnimAdd('singRIGHTmiss', 'Pico NOTE LEFT miss');
-					quickAnimAdd('singLEFTmiss', 'Pico Note Right Miss');
-				}
-
-				quickAnimAdd('singUPmiss', 'pico Up note miss');
-				quickAnimAdd('singDOWNmiss', 'Pico Down Note MISS');
-
-				loadOffsetFile(curCharacter);
-				barColor = 0xFFb7d855;
-
-					addColorsNote(0xFFb7d855, 0xFFb7d855, 0xFFb7d855, 0xFFb7d855);
-
-				playAnim('idle');
-
-				flipX = true;
-
-			case 'pico-speaker':
-				addImageCharacter('characters/picoSpeaker');
-				quickAnimAdd('shoot1', "Pico shoot 1");
-				quickAnimAdd('shoot2', "Pico shoot 2");
-				quickAnimAdd('shoot3', "Pico shoot 3");
-				quickAnimAdd('shoot4', "Pico shoot 4");
-
-				// here for now, will be replaced later for less copypaste
-				loadOffsetFile(curCharacter);
-				barColor = 0xFFb7d855;
-
-					addColorsNote(0xFFb7d855, 0xFFb7d855, 0xFFb7d855, 0xFFb7d855);
-				
-				playAnim('shoot1');
-
-				loadMappedAnims();
-
-			case 'bf':
-				addImageCharacter('characters/BOYFRIEND');
-				quickAnimAdd('idle', 'BF idle dance');
-				quickAnimAdd('singUP', 'BF NOTE UP0');
-				quickAnimAdd('singLEFT', 'BF NOTE LEFT0');
-				quickAnimAdd('singRIGHT', 'BF NOTE RIGHT0');
-				quickAnimAdd('singDOWN', 'BF NOTE DOWN0');
-				quickAnimAdd('singUPmiss', 'BF NOTE UP MISS');
-				quickAnimAdd('singLEFTmiss', 'BF NOTE LEFT MISS');
-				quickAnimAdd('singRIGHTmiss', 'BF NOTE RIGHT MISS');
-				quickAnimAdd('singDOWNmiss', 'BF NOTE DOWN MISS');
-				quickAnimAdd('hey', 'BF HEY');
-
-				quickAnimAdd('firstDeath', "BF dies");
-				animation.addByPrefix('deathLoop', "BF Dead Loop", 24, true);
-				quickAnimAdd('deathConfirm', "BF Dead confirm");
-
-				animation.addByPrefix('scared', 'BF idle shaking', 24, true);
-
-				loadOffsetFile(curCharacter);
-
-				playAnim('idle');
-				barColor = 0xFF31b0d1;
-
-					addColorsNote(0xFFD400FF, 0xFF00E5FF, 0xFF2BFF00, 0xFFFF0000);
-
-				flipX = true;
-
-				loadOffsetFile(curCharacter);
-
-			case 'bf-christmas':
-				addImageCharacter('characters/bfChristmas');
-				quickAnimAdd('idle', 'BF idle dance');
-				quickAnimAdd('singUP', 'BF NOTE UP0');
-				quickAnimAdd('singLEFT', 'BF NOTE LEFT0');
-				quickAnimAdd('singRIGHT', 'BF NOTE RIGHT0');
-				quickAnimAdd('singDOWN', 'BF NOTE DOWN0');
-				quickAnimAdd('singUPmiss', 'BF NOTE UP MISS');
-				quickAnimAdd('singLEFTmiss', 'BF NOTE LEFT MISS');
-				quickAnimAdd('singRIGHTmiss', 'BF NOTE RIGHT MISS');
-				quickAnimAdd('singDOWNmiss', 'BF NOTE DOWN MISS');
-				quickAnimAdd('hey', 'BF HEY');
-
-				loadOffsetFile(curCharacter);
-
-				playAnim('idle');
-				barColor = 0xFF31b0d1;
-
-					addColorsNote(0xFFD400FF, 0xFF00E5FF, 0xFF2BFF00, 0xFFFF0000);
-
-				flipX = true;
-			case 'bf-car':
-				addImageCharacter('characters/bfCar');
-				quickAnimAdd('idle', 'BF idle dance');
-				quickAnimAdd('singUP', 'BF NOTE UP0');
-				quickAnimAdd('singLEFT', 'BF NOTE LEFT0');
-				quickAnimAdd('singRIGHT', 'BF NOTE RIGHT0');
-				quickAnimAdd('singDOWN', 'BF NOTE DOWN0');
-				quickAnimAdd('singUPmiss', 'BF NOTE UP MISS');
-				quickAnimAdd('singLEFTmiss', 'BF NOTE LEFT MISS');
-				quickAnimAdd('singRIGHTmiss', 'BF NOTE RIGHT MISS');
-				quickAnimAdd('singDOWNmiss', 'BF NOTE DOWN MISS');
-				animation.addByIndices('idleHair', 'BF idle dance', [10, 11, 12, 13], "", 24, true);
-
-				loadOffsetFile(curCharacter);
-
-				playAnim('idle');
-				barColor = 0xFF31b0d1;
-
-					addColorsNote(0xFFD400FF, 0xFF00E5FF, 0xFF2BFF00, 0xFFFF0000);
-
-				flipX = true;
-			case 'bf-pixel':
-				addImageCharacter('characters/bfPixel');
-				quickAnimAdd('idle', 'BF IDLE');
-				quickAnimAdd('singUP', 'BF UP NOTE');
-				quickAnimAdd('singLEFT', 'BF LEFT NOTE');
-				quickAnimAdd('singRIGHT', 'BF RIGHT NOTE');
-				quickAnimAdd('singDOWN', 'BF DOWN NOTE');
-				quickAnimAdd('singUPmiss', 'BF UP MISS');
-				quickAnimAdd('singLEFTmiss', 'BF LEFT MISS');
-				quickAnimAdd('singRIGHTmiss', 'BF RIGHT MISS');
-				quickAnimAdd('singDOWNmiss', 'BF DOWN MISS');
-
-				loadOffsetFile(curCharacter);
-
-				setGraphicSize(Std.int(width * 6));
-				updateHitbox();
-
-				playAnim('idle');
-				barColor = 0xFF31b0d1;
-
-					addColorsNote(0xFFD400FF, 0xFF00E5FF, 0xFF2BFF00, 0xFFFF9D00);
-
-				width -= 100;
-				height -= 100;
-
-				antialiasing = false;
-
-				flipX = true;
-			case 'bf-pixel-dead':
-				addImageCharacter('characters/bfPixelsDEAD');
-				quickAnimAdd('singUP', "BF Dies pixel");
-				quickAnimAdd('firstDeath', "BF Dies pixel");
-				animation.addByPrefix('deathLoop', "Retry Loop", 24, true);
-				quickAnimAdd('deathConfirm', "RETRY CONFIRM");
-				animation.play('firstDeath');
-
-				loadOffsetFile(curCharacter);
-
-				playAnim('firstDeath');
-				barColor = 0xFF31b0d1;
-
-					addColorsNote(0xFFD400FF, 0xFF00E5FF, 0xFF2BFF00, 0xFFFF9D00);
-
-				// pixel bullshit
-				setGraphicSize(Std.int(width * 6));
-				updateHitbox();
-				antialiasing = false;
-				flipX = true;
-
-			case 'bf-holding-gf-dead':
-				addImageCharacter('characters/bfHoldingGF-DEAD');
-				quickAnimAdd('singUP', 'BF Dead with GF Loop');
-				quickAnimAdd('firstDeath', 'BF Dies with GF');
-				animation.addByPrefix('deathLoop', 'BF Dead with GF Loop', 24, true);
-				quickAnimAdd('deathConfirm', 'RETRY confirm holding gf');
-
-				loadOffsetFile(curCharacter);
-				barColor = 0xFF31b0d1;
-
-					addColorsNote(0xFF31b0d1, 0xFF31b0d1, 0xFF31b0d1, 0xFF31b0d1);
-
-				playAnim('firstDeath');
-
-				flipX = true;
-
-			case 'senpai':
-				addImageCharacter('characters/senpai');
-				quickAnimAdd('idle', 'Senpai Idle');
-				// at framerate 16.8 animation plays over 2 beats at 144bpm,
-				// but if the game lags or the bpm is > 144 (mods etc.)
-				// he may miss his next dance
-				// animation.getByName('idle').frameRate = 16.8;
-
-				quickAnimAdd('singUP', 'SENPAI UP NOTE');
-				quickAnimAdd('singLEFT', 'SENPAI LEFT NOTE');
-				quickAnimAdd('singRIGHT', 'SENPAI RIGHT NOTE');
-				quickAnimAdd('singDOWN', 'SENPAI DOWN NOTE');
-
-				loadOffsetFile(curCharacter);
-				barColor = 0xFFffaa6f;
-
-					addColorsNote(0xFFffaa6f, 0xFFffaa6f, 0xFFffaa6f, 0xFFffaa6f);
-
-				playAnim('idle');
-
-				setGraphicSize(Std.int(width * 6));
-				updateHitbox();
-
-				antialiasing = false;
-			case 'senpai-angry':
-				addImageCharacter('characters/senpai');
-				quickAnimAdd('idle', 'Angry Senpai Idle');
-				quickAnimAdd('singUP', 'Angry Senpai UP NOTE');
-				quickAnimAdd('singLEFT', 'Angry Senpai LEFT NOTE');
-				quickAnimAdd('singRIGHT', 'Angry Senpai RIGHT NOTE');
-				quickAnimAdd('singDOWN', 'Angry Senpai DOWN NOTE');
-
-				loadOffsetFile(curCharacter);
-
-				playAnim('idle');
-				barColor = 0xFFffaa6f;
-
-					addColorsNote(0xFFffaa6f, 0xFFffaa6f, 0xFFffaa6f, 0xFFffaa6f);
-
-				setGraphicSize(Std.int(width * 6));
-				updateHitbox();
-
-				antialiasing = false;
-
-			case 'spirit':
-				frames = Paths.getPackerAtlas('characters/spirit');
-				quickAnimAdd('idle', "idle spirit_");
-				quickAnimAdd('singUP', "up_");
-				quickAnimAdd('singRIGHT', "right_");
-				quickAnimAdd('singLEFT', "left_");
-				quickAnimAdd('singDOWN', "spirit down_");
-
-				loadOffsetFile(curCharacter);
-				barColor = 0xFFff3c6e;
-
-					addColorsNote(0xFFff3c6e, 0xFFff3c6e, 0xFFff3c6e, 0xFFff3c6e);
-
-				setGraphicSize(Std.int(width * 6));
-				updateHitbox();
-
-				playAnim('idle');
-
-				antialiasing = false;
-
-			case 'parents-christmas':
-				addImageCharacter('characters/mom_dad_christmas_assets');
-				quickAnimAdd('idle', 'Parent Christmas Idle');
-				quickAnimAdd('singUP', 'Parent Up Note Dad');
-				quickAnimAdd('singDOWN', 'Parent Down Note Dad');
-				quickAnimAdd('singLEFT', 'Parent Left Note Dad');
-				quickAnimAdd('singRIGHT', 'Parent Right Note Dad');
-
-				quickAnimAdd('singUP-alt', 'Parent Up Note Mom');
-
-				quickAnimAdd('singDOWN-alt', 'Parent Down Note Mom');
-				quickAnimAdd('singLEFT-alt', 'Parent Left Note Mom');
-				quickAnimAdd('singRIGHT-alt', 'Parent Right Note Mom');
-
-				loadOffsetFile(curCharacter);
-				barColor = 0xffac40b8;
-
-					addColorsNote(0xffac40b8, 0xffac40b8, 0xffac40b8, 0xffac40b8);
-
-				playAnim('idle');
-			case 'tankman':
-				addImageCharacter('characters/tankmanCaptain');
-				quickAnimAdd('idle', "Tankman Idle Dance");
-
-				if (isPlayer)
-				{
-					quickAnimAdd('singLEFT', 'Tankman Note Left ');
-					quickAnimAdd('singRIGHT', 'Tankman Right Note ');
-					quickAnimAdd('singLEFTmiss', 'Tankman Note Left MISS');
-					quickAnimAdd('singRIGHTmiss', 'Tankman Right Note MISS');
-				}
-				else
-				{
-					// Need to be flipped! REDO THIS LATER
-					quickAnimAdd('singLEFT', 'Tankman Right Note ');
-					quickAnimAdd('singRIGHT', 'Tankman Note Left ');
-					quickAnimAdd('singLEFTmiss', 'Tankman Right Note MISS');
-					quickAnimAdd('singRIGHTmiss', 'Tankman Note Left MISS');
-				}
-
-				quickAnimAdd('singUP', 'Tankman UP note ');
-				quickAnimAdd('singDOWN', 'Tankman DOWN note ');
-				quickAnimAdd('singUPmiss', 'Tankman UP note MISS');
-				quickAnimAdd('singDOWNmiss', 'Tankman DOWN note MISS');
-
-				// PRETTY GOOD tankman
-				// TANKMAN UGH instanc
-
-				quickAnimAdd('singDOWN-alt', 'PRETTY GOOD');
-				quickAnimAdd('singUP-alt', 'TANKMAN UGH');
-
-				loadOffsetFile(curCharacter);
-				barColor = 0xffE1E1E1;
-
-					addColorsNote(0xffE1E1E1, 0xff6f6f6f, 0xffE1E1E1, 0xff6f6f6f);
-
-				playAnim('idle');
-
-				flipX = true;
+			//Json File Character 
 			default:
-				parseDataFile();
+				//Debug.logInfo('Generating character (${curCharacter}) from JSON data...');
+				var characterPath:String = 'characters/' + curCharacter + '.json';
+				var spriteType = "sparrow";
+
+				var path:String = Paths.getPreloadPath(characterPath);
+				if (!Assets.exists(path))
+				{
+					path = Paths.getPreloadPath('characters/' + DEFAULT_CHARACTER + '.json'); //If a character couldn't be found, change him to BF just to prevent a crash
+				}
+		
+				// Load the data from JSON and cast it to a struct we can easily read.
+				var jsonData = Assets.getText(path);
+				/*if (jsonData == null)
+				{
+					Debug.logError('Failed to parse JSON data for character ${curCharacter}');
+					return;
+				}*/
+		
+				var data:CharacterFile = cast Json.parse(jsonData);
+		
+				if (Assets.exists(Paths.getPath('images/' + data.image + '.txt', TEXT)))
+				{
+					spriteType = "packer";
+				}
+				if (Assets.exists(Paths.getPath('images/' + data.image + '/Animation.json', TEXT)))
+				{
+					spriteType = "texture";
+				}
+
+				switch (spriteType){
+					
+					case "packer":
+						frames = Paths.getPackerAtlas(data.image);
+					
+					case "sparrow":
+						frames = Paths.getSparrowAtlas(data.image);
+					
+					case "texture":
+						loadMappedAnims();
+				}
+
+				antialiasing = data.antialiasing;
+		
+				flipX = data.flip_x;
+
+				if(data.scale != 1) {
+					jsonScale = data.scale;
+					setGraphicSize(Std.int(width * jsonScale));
+					updateHitbox();
+				}
+
+				positionChar = data.character_position;
+				cameraPosition = data.camera_position;
+
+				if (frames != null)
+					for (anim in data.animations)
+					{
+						var animAnim:String = '' + anim.anim;
+						var animName:String = '' + anim.name;
+						var animFps:Int = anim.fps;
+						var animLoop:Bool = !!anim.loop; //Bruh
+						var animIndices:Array<Int> = anim.indices;
+		
+						if (anim.indices != null && animIndices.length > 0)
+						{
+							animation.addByIndices(animAnim, animName, animIndices, "", animFps, animLoop);
+						}
+						else
+						{
+							animation.addByPrefix(animAnim, animName, animFps, animLoop);
+						}
+
+						if(anim.offsets != null && anim.offsets.length > 1) {
+							addOffset(anim.anim, anim.offsets[0], anim.offsets[1]);
+						}
+					}
+				var color0 = FlxColor.fromString(data.note_colors[0]);
+				var color1 = FlxColor.fromString(data.note_colors[1]);
+				var color2 = FlxColor.fromString(data.note_colors[2]);
+				var color3 = FlxColor.fromString(data.note_colors[3]);
+
+				if (!isPlayer)
+					{
+						Note.dadcolorsNote = [color0, color1, color2, color3];
+					}
+					else
+					{
+						Note.bfcolorsNote = [color0, color1, color2, color3];
+					}
+
+				barColor = FlxColor.fromString(data.healthbar_colors);
+				healthIcon = data.healthicon;
+		
+				playAnim(data.startingAnim);
 		}
 
 		dance();
@@ -578,6 +169,12 @@ class Character extends FlxSprite
 					animation.getByName('singLEFTmiss').frames = oldMiss;
 				}
 			}
+		}
+
+		switch(curCharacter)
+		{
+			case 'pico-speaker':
+				loadMappedAnims();
 		}
 	}
 
@@ -738,7 +335,7 @@ class Character extends FlxSprite
 		else
 			offset.set(0, 0);
 
-		if (curCharacter == 'gf')
+		if (curCharacter.startsWith('gf'))
 		{
 			if (AnimName == 'singLEFT')
 			{
@@ -779,74 +376,72 @@ class Character extends FlxSprite
 		
 	}
 
-	function parseDataFile()
-	{
-		var jsonData = Paths.characterjson('json/${curCharacter}');
+	/*public function characterFile() {
+		//Debug.logInfo('Generating character (${curCharacter}) from JSON data...');
 
-		var data:CharacterData = cast jsonData;
+		// Load the data from JSON and cast it to a struct we can easily read.
+		var jsonData = Paths.file('characters/${curCharacter}');
+		/*if (jsonData == null)
+		{
+			Debug.logError('Failed to parse JSON data for character ${curCharacter}');
+			return;
+		}*/
 
-		var tex:FlxAtlasFrames = Paths.getSparrowAtlas(data.asset, 'shared');
+		/*var data:CharacterFile = cast jsonData;
+
+		var tex:FlxAtlasFrames = Paths.getSparrowAtlas(data.image, 'shared');
 		frames = tex;
+
+		flipX = data.flip_x;
 		if (frames != null)
 			for (anim in data.animations)
 			{
-				var frameRate = anim.frameRate == null ? 24 : anim.frameRate;
-				var looped = anim.looped == null ? false : anim.looped;
-				var flipX = anim.flipX == null ? false : anim.flipX;
-				var flipY = anim.flipY == null ? false : anim.flipY;
+				var animAnim:String = '' + anim.anim;
+				var animName:String = '' + anim.name;
+				var animFps:Int = anim.fps;
+				var animLoop:Bool = !!anim.loop; //Bruh
+				var animIndices:Array<Int> = anim.indices;
 
-				if (anim.frameIndices != null)
+				if (anim.indices != null)
 				{
-					animation.addByIndices(anim.name, anim.prefix, anim.frameIndices, "", frameRate, looped, flipX, flipY);
+					animation.addByIndices(animAnim, animName, animIndices, "", animFps, animLoop);
 				}
 				else
 				{
-					animation.addByPrefix(anim.name, anim.prefix, frameRate, looped, flipX, flipY);
+					animation.addByPrefix(animAnim, animName, animFps, animLoop);
 				}
 
 				animOffsets[anim.name] = anim.offsets == null ? [0, 0] : anim.offsets;
 			}
 
-		barColor = data.barColor;
+		barColor = FlxColor.fromString(data.healthbar_colors);
 
 		playAnim(data.startingAnim);
-	}
+	}*/
 }
 
-typedef CharacterData =
-{
-	var name:String;
-	var asset:String;
+typedef CharacterFile = {
+	var image:String;
+	var scale:Float;
+
+	var flip_x:Bool;
+	var animations:Array<AnimArray>;
+	
+	var healthbar_colors:String;
+	var note_colors:Array<String>;
 	var startingAnim:String;
+	var healthicon:String;
+	var antialiasing:Bool;
 
-	/**
-	 * The color of this character's health bar.
-	 */
-	var barColor:FlxColor;
-
-	var animations:Array<AnimationData>;
+	var character_position:Array<Float>;
+	var camera_position:Array<Float>;
 }
 
-typedef AnimationData =
-{
+typedef AnimArray = {
+	var anim:String;
 	var name:String;
-	var prefix:String;
-	var ?offsets:Array<Int>;
-
-	/**
-	 * Whether this animation is looped.
-	 * @default false
-	 */
-	var ?looped:Bool;
-
-	var ?flipX:Bool;
-	var ?flipY:Bool;
-
-	/**
-	 * The frame rate of this animation.
-	 		* @default 24
-	 */
-	var ?frameRate:Int;
-
-	var ?frameIndices:Array<Int>;
+	var fps:Int;
+	var loop:Bool;
+	var indices:Array<Int>;
+	var offsets:Array<Int>;
 }

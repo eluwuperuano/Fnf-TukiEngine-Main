@@ -64,9 +64,9 @@ class PlayState extends MusicBeatState
 
 	private var vocals:FlxSound;
 
-	private var dad:Character;
-	private var gf:Character;
-	private var boyfriend:Boyfriend;
+	public var dad:Character = null;
+	public var gf:Character = null;
+	public var boyfriend:Boyfriend = null;
 
 	private var notes:FlxTypedGroup<Note>;
 	private var unspawnNotes:Array<Note> = [];
@@ -604,6 +604,7 @@ class PlayState extends MusicBeatState
 			gfVersion = 'pico-speaker';
 
 		gf = new Character(400, 130, gfVersion);
+		startCharacterPos(gf);
 		gf.scrollFactor.set(0.95, 0.95);
 
 		switch (gfVersion)
@@ -633,31 +634,31 @@ class PlayState extends MusicBeatState
 		// Shitty layering but whatev it works LOL
 
 		dad = new Character(100, 100, SONG.player2);
+		startCharacterPos(dad, true);
 
 		var camPos:FlxPoint = new FlxPoint(dad.getGraphicMidpoint().x, dad.getGraphicMidpoint().y);
 
-		switch (SONG.player2)
+		if (dad.curCharacter.startsWith('gf'))
+	    {
+			dad.setPosition(gf.x, gf.y);
+			if (gf != null)
+				gf.visible = false;
+		}
+		/*switch (SONG.player2)
 		{
 			case 'gf':
-				dad.setPosition(gf.x, gf.y);
-				gf.visible = false;
 				if (isStoryMode)
 				{
 					camPos.x += 600;
 					tweenCamIn();
 				}
 
-			case "spooky":
+			/*case "spooky":
 				dad.y += 200;
 			case "monster":
-				dad.y += 100;
-			case 'monster-christmas':
+				dad.y += 100;*/
+		/*	case 'monster-christmas':
 				dad.y += 130;
-			case 'dad':
-				camPos.x += 400;
-			case 'pico':
-				camPos.x += 600;
-				dad.y += 300;
 			case 'parents-christmas':
 				dad.x -= 500;
 			case 'senpai':
@@ -674,9 +675,15 @@ class PlayState extends MusicBeatState
 				camPos.set(dad.getGraphicMidpoint().x + 300, dad.getGraphicMidpoint().y);
 			case 'tankman':
 				dad.y += 180;
-		}
+			default:
+				camPos.x += dad.cameraPosition[0];
+				camPos.y += dad.cameraPosition[1];
+				dad.x += dad.positionChar[0];
+				dad.y += dad.positionChar[1];
+		}*/
 
 		boyfriend = new Boyfriend(770, 450, SONG.player1);
+		startCharacterPos(boyfriend);
 
 		// REPOSITIONING PER STAGE
 		switch (curStage)
@@ -819,10 +826,10 @@ class PlayState extends MusicBeatState
 		scoreTxt.scrollFactor.set();
 		add(scoreTxt);
 
-		iconP1 = new HealthIcon(SONG.player1, true);
+		iconP1 = new HealthIcon(boyfriend.healthIcon, true);
 		iconP1.y = healthBar.y - (iconP1.height / 2);
 
-		iconP2 = new HealthIcon(SONG.player2, false);
+		iconP2 = new HealthIcon(dad.healthIcon, false);
 		iconP2.y = healthBar.y - (iconP2.height / 2);
 
 		add(healthBar);
@@ -911,6 +918,17 @@ class PlayState extends MusicBeatState
 		}
 
 		super.create();
+	}
+
+	function startCharacterPos(char:Character, ?gfCheck:Bool = false)
+	{
+		if (gfCheck && char.curCharacter.startsWith('gf'))
+		{ // IF DAD IS GIRLFRIEND, HE GOES TO HER POSITION
+			char.setPosition(gf.x, gf.y);
+			char.scrollFactor.set(0.95, 0.95);
+		}
+		char.x += char.positionChar[0];
+		char.y += char.positionChar[1];
 	}
 
 	function ughIntro()
@@ -2538,7 +2556,7 @@ class PlayState extends MusicBeatState
 	function noteMissPress(direction:Int = 1):Void //You pressed a key when there was no notes to press for this key
 	{
 			health -= 0.05;
-			if (combo > 5)
+			if (combo > 5 && gf != null && gf.animOffsets.exists('sad'))
 			{
 				gf.playAnim('sad');
 			}
@@ -2709,7 +2727,10 @@ class PlayState extends MusicBeatState
 		if (trainSound.time >= 4700)
 		{
 			startedMoving = true;
-			gf.playAnim('hairBlow');
+			if (gf != null)
+			{
+				gf.playAnim('hairBlow');
+			}
 		}
 
 		if (startedMoving)
@@ -2732,7 +2753,10 @@ class PlayState extends MusicBeatState
 
 	function trainReset():Void
 	{
-		gf.playAnim('hairFall');
+		if (gf != null)
+		{
+			gf.playAnim('hairFall');
+		}
 		phillyTrain.x = FlxG.width + 200;
 		trainMoving = false;
 		// trainSound.stop();

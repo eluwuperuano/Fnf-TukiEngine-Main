@@ -1,0 +1,61 @@
+{
+    "image": "characters/momCar",
+    "scale": 1,
+    "flip_x": false,
+    "animations": [
+    {
+        "anim": "idle",
+        "name": "Mom Idle",
+        "fps": 24,
+        "loop": false,
+        "indices": [],
+        "offsets": [0, 0]
+    },
+    {
+        "anim": "singUP",
+        "name": "Mom Up Pose",
+        "fps": 24,
+        "loop": false,
+        "indices": [],
+        "offsets": [14, 71]
+    },
+    {
+        "anim": "singLEFT",
+        "name": "Mom Left Pose",
+        "fps": 24,
+        "loop": false,
+        "indices": [],
+        "offsets": [250, -23]
+    },
+    {
+        "anim": "singRIGHT",
+        "name": "Mom Pose Left",
+        "fps": 24,
+        "loop": false,
+        "indices": [],
+        "offsets": [10, -60]
+    },
+    {
+        "anim": "singDOWN",
+        "name": "MOM DOWN POSE",
+        "fps": 24,
+        "loop": false,
+        "indices": [],
+        "offsets": [20, -160]
+    },
+    {
+        "anim": "idleHair",
+        "name": "Mom Idle",
+        "fps": 24,
+        "loop": true,
+        "indices": [10, 11, 12, 13],
+        "offsets": [0, 0]
+    }],
+    "healthbar_colors": "#d8558e",
+    "note_colors": ["#d8558e", "#d8558e", "#d8558e", "#d8558e"],
+    "startingAnim": "idle",
+    "healthicon": "mom",
+    "antialiasing": true,
+    "character_position": [0, 0],
+    "camera_position": [0, 0]
+}

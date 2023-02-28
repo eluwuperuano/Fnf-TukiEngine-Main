@@ -1,5 +1,6 @@
 package;
 
+import flixel.addons.ui.FlxUIDropDownMenu;
 import flixel.ui.FlxButton;
 import flixel.FlxG;
 import flixel.FlxObject;
@@ -28,11 +29,12 @@ class CharactersEditor extends FlxState
 	var animList:Array<String> = [];
 	var curAnim:Int = 0;
 	var isDad:Bool = true;
-	var daAnim:String = 'spooky';
+	var daAnim:String = 'dad';
 	var camFollow:FlxObject;
 	var savecharacter:FlxButton;
 
-	public function new(daAnim:String = 'spooky')
+
+	public function new(daAnim:String = 'dad')
 	{
 		super();
 		this.daAnim = daAnim;
@@ -40,17 +42,28 @@ class CharactersEditor extends FlxState
 
 	override function create()
 	{
+		FlxG.mouse.visible = true;
 		FlxG.sound.music.stop();
 
-		savecharacter = new FlxButton(100, 10, 'Save', function()
-		{
-			characterSaveButtom();
-		});
-		add(savecharacter);
+		var bg:BGSprite = new BGSprite('stageback', -600, -200, 0.9, 0.9);
+		add(bg);
 
-		var gridBG:FlxSprite = FlxGridOverlay.create(10, 10);
-		gridBG.scrollFactor.set(0.5, 0.5);
-		add(gridBG);
+		var stageFront:FlxSprite = new FlxSprite(-650, 600).loadGraphic(Paths.image('stagefront'));
+		stageFront.setGraphicSize(Std.int(stageFront.width * 1.1));
+		stageFront.updateHitbox();
+		stageFront.antialiasing = true;
+		stageFront.scrollFactor.set(0.9, 0.9);
+		stageFront.active = false;
+		add(stageFront);
+
+		var stageCurtains:FlxSprite = new FlxSprite(-500, -300).loadGraphic(Paths.image('stagecurtains'));
+		stageCurtains.setGraphicSize(Std.int(stageCurtains.width * 0.9));
+		stageCurtains.updateHitbox();
+		stageCurtains.antialiasing = true;
+		stageCurtains.scrollFactor.set(1.3, 1.3);
+		stageCurtains.active = false;
+
+		add(stageCurtains);
 
 		if (daAnim == 'bf')
 			isDad = false;
@@ -84,6 +97,12 @@ class CharactersEditor extends FlxState
 		textAnim.scrollFactor.set();
 		add(textAnim);
 
+		savecharacter = new FlxButton(95, 30, 'Save', function()
+		{
+			characterSaveButtom();
+		});
+		add(savecharacter);
+
 		genBoyOffsets();
 
 		camFollow = new FlxObject(0, 0, 2, 2);
@@ -91,6 +110,15 @@ class CharactersEditor extends FlxState
 		add(camFollow);
 
 		FlxG.camera.follow(camFollow);
+
+		var characters:Array<String> = CoolUtil.coolTextFile(Paths.txt('characterList'));
+
+		var player2DropDown = new FlxUIDropDownMenu(140, 100, FlxUIDropDownMenu.makeStrIdLabelArray(characters, true), function(character:String)
+		{
+			PlayState.SONG.player2 = characters[Std.parseInt(character)];
+		});
+		player2DropDown.selectedLabel = PlayState.SONG.player2;
+		add(player2DropDown);
 
 		super.create();
 	}
@@ -124,6 +152,7 @@ class CharactersEditor extends FlxState
 
 	override function update(elapsed:Float)
 	{
+		daAnim = PlayState.SONG.player2;
 		textAnim.text = char.animation.curAnim.name;
 
 		if (FlxG.keys.justPressed.E)
