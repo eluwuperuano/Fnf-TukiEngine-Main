@@ -56,6 +56,5 @@
     "startingAnim": "idle",
     "healthicon": "mom",
     "antialiasing": true,
-    "character_position": [0, 0],
-    "camera_position": [0, 0]
+    "camerapos": [0, 0]
 }

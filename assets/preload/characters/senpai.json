@@ -48,6 +48,5 @@
     "startingAnim": "idle",
     "healthicon": "senpai",
     "antialiasing": false,
-    "character_position": [150, 360],
-    "camera_position": [0, 0]
+    "camerapos": [-40, -500]
 }

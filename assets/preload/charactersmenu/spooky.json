@@ -1,0 +1,8 @@
+{
+	"image": "spooky",
+	"scale": 0.5,
+	"position": [168, 50],
+	"idle_anim": "1",
+	"confirm_anim": "1",
+    "color": "#D57E00"
+}

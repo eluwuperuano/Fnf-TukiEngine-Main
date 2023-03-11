@@ -1,0 +1,9 @@
+{
+	"image": "pico",
+	"scale": 0.5,
+	"position": [130, 0],
+	"idle_anim": "1",
+	"confirm_anim": "1",
+	"flipX": true,
+    "color": "#B7D855"
+}

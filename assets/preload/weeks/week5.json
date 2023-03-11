@@ -1,0 +1,17 @@
+{
+    "songs": [
+        ["Cocoa", "parents", "#a0d1ff"], 
+        ["Eggnog", "parents", "#a0d1ff"], 
+        ["Winter-Horrorland", "monster", "#a0d1ff"]
+    ],
+    "weekCharacters": ["parents", "bf", "gf"],
+    "weekBefore": "Week4",
+    "storyName": "Red Snow",
+    "weekName": "Week5",
+    "freeplayColor": "#a0d1ff",
+    "startUnlocked": true,
+    "hiddenUntilUnlocked": false,
+    "hideStoryMode": false,
+    "hideFreeplay": false,
+    "bgColors": "#F9CF51"
+}

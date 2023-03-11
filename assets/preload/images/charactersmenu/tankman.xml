@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas imagePath="tankman.png">
+	<!-- Created with Adobe Animate version 21.0.0.35450 -->
+	<!-- http://www.adobe.com/products/animate.html -->
+	<SubTexture name="10000" x="429" y="556" width="425" height="553" frameX="-1" frameY="-19" frameWidth="431" frameHeight="573"/>
+	<SubTexture name="10001" x="429" y="556" width="425" height="553" frameX="-1" frameY="-19" frameWidth="431" frameHeight="573"/>
+	<SubTexture name="10002" x="429" y="0" width="427" height="556" frameX="0" frameY="-17" frameWidth="431" frameHeight="573"/>
+	<SubTexture name="10003" x="429" y="0" width="427" height="556" frameX="0" frameY="-17" frameWidth="431" frameHeight="573"/>
+	<SubTexture name="10004" x="428" y="1145" width="425" height="561" frameX="-4" frameY="-12" frameWidth="431" frameHeight="573"/>
+	<SubTexture name="10005" x="428" y="1145" width="425" height="561" frameX="-4" frameY="-12" frameWidth="431" frameHeight="573"/>
+	<SubTexture name="10006" x="0" y="1145" width="428" height="572" frameX="-3" frameY="-1" frameWidth="431" frameHeight="573"/>
+	<SubTexture name="10007" x="0" y="573" width="429" height="572" frameX="-2" frameY="-1" frameWidth="431" frameHeight="573"/>
+	<SubTexture name="10008" x="0" y="0" width="429" height="573" frameX="-2" frameY="0" frameWidth="431" frameHeight="573"/>
+	<SubTexture name="10009" x="0" y="0" width="429" height="573" frameX="-2" frameY="0" frameWidth="431" frameHeight="573"/>
+	<SubTexture name="10010" x="0" y="0" width="429" height="573" frameX="-2" frameY="0" frameWidth="431" frameHeight="573"/>
+	<SubTexture name="10011" x="0" y="0" width="429" height="573" frameX="-2" frameY="0" frameWidth="431" frameHeight="573"/>
+	<SubTexture name="10012" x="0" y="0" width="429" height="573" frameX="-2" frameY="0" frameWidth="431" frameHeight="573"/>
+	<SubTexture name="10013" x="0" y="0" width="429" height="573" frameX="-2" frameY="0" frameWidth="431" frameHeight="573"/>
+</TextureAtlas>

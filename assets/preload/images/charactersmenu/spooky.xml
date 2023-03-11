@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas imagePath="spooky.png">
+	<!-- Created with Adobe Animate version 21.0.0.35450 -->
+	<!-- http://www.adobe.com/products/animate.html -->
+	<SubTexture name="10000" x="973" y="0" width="381" height="549" frameX="-50" frameY="0" frameWidth="492" frameHeight="549"/>
+	<SubTexture name="10001" x="973" y="0" width="381" height="549" frameX="-50" frameY="0" frameWidth="492" frameHeight="549"/>
+	<SubTexture name="10002" x="1354" y="0" width="379" height="541" frameX="-55" frameY="-8" frameWidth="492" frameHeight="549"/>
+	<SubTexture name="10003" x="1354" y="0" width="379" height="541" frameX="-55" frameY="-8" frameWidth="492" frameHeight="549"/>
+	<SubTexture name="10004" x="1354" y="541" width="357" height="484" frameX="-79" frameY="-61" frameWidth="492" frameHeight="549"/>
+	<SubTexture name="10005" x="1354" y="541" width="357" height="484" frameX="-79" frameY="-61" frameWidth="492" frameHeight="549"/>
+	<SubTexture name="10006" x="492" y="524" width="354" height="494" frameX="-78" frameY="-52" frameWidth="492" frameHeight="549"/>
+	<SubTexture name="10007" x="492" y="524" width="354" height="494" frameX="-78" frameY="-52" frameWidth="492" frameHeight="549"/>
+	<SubTexture name="10008" x="0" y="0" width="492" height="532" frameX="0" frameY="-16" frameWidth="492" frameHeight="549"/>
+	<SubTexture name="10009" x="0" y="0" width="492" height="532" frameX="0" frameY="-16" frameWidth="492" frameHeight="549"/>
+	<SubTexture name="10010" x="492" y="0" width="481" height="524" frameX="-7" frameY="-20" frameWidth="492" frameHeight="549"/>
+	<SubTexture name="10011" x="492" y="0" width="481" height="524" frameX="-7" frameY="-20" frameWidth="492" frameHeight="549"/>
+	<SubTexture name="10012" x="846" y="549" width="357" height="484" frameX="-79" frameY="-61" frameWidth="492" frameHeight="549"/>
+	<SubTexture name="10013" x="846" y="549" width="357" height="484" frameX="-79" frameY="-61" frameWidth="492" frameHeight="549"/>
+	<SubTexture name="10014" x="0" y="532" width="354" height="494" frameX="-78" frameY="-52" frameWidth="492" frameHeight="549"/>
+	<SubTexture name="10015" x="0" y="532" width="354" height="494" frameX="-78" frameY="-52" frameWidth="492" frameHeight="549"/>
+</TextureAtlas>

@@ -80,6 +80,5 @@
     "startingAnim": "idle",
     "healthicon": "parents",
     "antialiasing": true,
-    "character_position": [0, 0],
-    "camera_position": [-500, 0]
+    "camerapos": [0, 0]
 }

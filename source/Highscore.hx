@@ -5,8 +5,10 @@ import flixel.FlxG;
 class Highscore
 {
 	#if (haxe >= "4.0.0")
+	public static var weekScores:Map<String, Int> = new Map();
 	public static var songScores:Map<String, Int> = new Map();
 	#else
+	public static var weekScores:Map<String, Int> = new Map();
 	public static var songScores:Map<String, Int> = new Map<String, Int>();
 	#end
 
@@ -30,23 +32,17 @@ class Highscore
 			setScore(daSong, score);
 	}
 
-	public static function saveWeekScore(week:Int = 1, score:Int = 0, ?diff:Int = 0):Void
+	public static function saveWeekScore(week:String, score:Int = 0, ?diff:Int = 0):Void
 	{
+		var daWeek:String = formatSong(week, diff);
 
-		#if !switch
-		NGio.postScore(score, "Week " + week);
-		#end
-
-
-		var daWeek:String = formatSong('week' + week, diff);
-
-		if (songScores.exists(daWeek))
+		if (weekScores.exists(daWeek))
 		{
-			if (songScores.get(daWeek) < score)
-				setScore(daWeek, score);
+			if (weekScores.get(daWeek) < score)
+				setWeekScore(daWeek, score);
 		}
 		else
-			setScore(daWeek, score);
+			setWeekScore(daWeek, score);
 	}
 
 	/**
@@ -80,12 +76,20 @@ class Highscore
 		return songScores.get(formatSong(song, diff));
 	}
 
-	public static function getWeekScore(week:Int, diff:Int):Int
+	public static function getWeekScore(week:String, diff:Int):Int
 	{
-		if (!songScores.exists(formatSong('week' + week, diff)))
-			setScore(formatSong('week' + week, diff), 0);
+		var daWeek:String = formatSong(week, diff);
+		if (!weekScores.exists(daWeek))
+			setWeekScore(daWeek, 0);
 
-		return songScores.get(formatSong('week' + week, diff));
+		return weekScores.get(daWeek);
+	}
+	static function setWeekScore(week:String, score:Int):Void
+	{
+		// Reminder that I don't need to format this song, it should come formatted!
+		weekScores.set(week, score);
+		FlxG.save.data.weekScores = weekScores;
+		FlxG.save.flush();
 	}
 
 	public static function load():Void

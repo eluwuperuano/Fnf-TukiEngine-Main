@@ -17,9 +17,29 @@ class CoolUtil
 {
 	public static var difficultyArray:Array<String> = ['EASY', "NORMAL", "HARD"];
 
+	public static var defaultDifficulty:String = 'NORMAL'; //The chart that has no suffix and starting difficulty on Freeplay/Story Mode
+
+	public static var difficulties:Array<String> = [];
+	
 	public static function difficultyString():String
 	{
 		return difficultyArray[PlayState.storyDifficulty];
+	}
+	
+	public static function getDifficultyFilePath(num:Null<Int> = null)
+	{
+		if(num == null) num = PlayState.storyDifficulty;
+
+		var fileSuffix:String = difficulties[num];
+		if(fileSuffix != defaultDifficulty)
+		{
+			fileSuffix = '-' + fileSuffix;
+		}
+		else
+		{
+			fileSuffix = '';
+		}
+		return Paths.formatToSongPath(fileSuffix);
 	}
 
 	public static function coolTextFile(path:String):Array<String>
@@ -66,5 +86,11 @@ class CoolUtil
 
 	inline public static function boundTo(value:Float, min:Float, max:Float):Float {
 		return Math.max(min, Math.min(max, value));
+	}
+	public static function getSavePath(folder:String = 'Tuki'):String {
+		@:privateAccess
+		return #if (flixel < "5.0.0") folder #else FlxG.stage.application.meta.get('company')
+			+ '/'
+			+ FlxSave.validate(FlxG.stage.application.meta.get('file')) #end;
 	}
 }

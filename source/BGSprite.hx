@@ -1,43 +1,37 @@
 package;
 
 import flixel.FlxSprite;
+import flixel.graphics.frames.FlxAtlasFrames;
 
 class BGSprite extends FlxSprite
 {
-	/**
-		Cool lil utility thing just so that it can easy do antialiasing and scrollfactor bullshit
-	 */
-	public var idleAnim:String;
-
-	public function new(image:String, x:Float = 0, y:Float = 0, parX:Float = 1, parY:Float = 1, ?daAnimations:Array<String>, ?loopingAnim:Bool = false)
-	{
+	private var idleAnim:String;
+	public function new(image:String, x:Float = 0, y:Float = 0, ?scrollX:Float = 1, ?scrollY:Float = 1, ?animArray:Array<String> = null, ?loop:Bool = false) {
 		super(x, y);
 
-		if (daAnimations != null)
-		{
+		if (animArray != null) {
 			frames = Paths.getSparrowAtlas(image);
-			for (anims in daAnimations)
-			{
-				animation.addByPrefix(anims, anims, 24, loopingAnim);
-				animation.play(anims);
-
-				if (idleAnim == null)
-					idleAnim = anims;
+			for (i in 0...animArray.length) {
+				var anim:String = animArray[i];
+				animation.addByPrefix(anim, anim, 24, loop);
+				if(idleAnim == null) {
+					idleAnim = anim;
+					animation.play(anim);
+				}
 			}
-		}
-		else
-		{
-			loadGraphic(Paths.image(image));
+		} else {
+			if(image != null) {
+				loadGraphic(Paths.image(image));
+			}
 			active = false;
 		}
-
-		scrollFactor.set(parX, parY);
+		scrollFactor.set(scrollX, scrollY);
 		antialiasing = true;
 	}
 
-	public function dance():Void
-	{
-		if (idleAnim != null)
-			animation.play(idleAnim);
+	public function dance(?forceplay:Bool = false) {
+		if(idleAnim != null) {
+			animation.play(idleAnim, forceplay);
+		}
 	}
 }

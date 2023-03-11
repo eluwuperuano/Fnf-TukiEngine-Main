@@ -10,6 +10,10 @@ class AttachedText extends Alphabet
 	public var sprTracker:FlxSprite;
 	public var copyVisible:Bool = true;
 	public var copyAlpha:Bool = false;
+	public var scaleY:Null<Float>;
+	public var scaleX:Null<Float>;
+
+
 	public function new(text:String = "", ?offsetX:Float = 0, ?offsetY:Float = 0, ?bold = false, ?scale:Float = 1) {
 		super(0, 0, text, bold);
 

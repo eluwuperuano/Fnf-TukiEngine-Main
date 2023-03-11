@@ -1,0 +1,17 @@
+{
+    "songs": [
+        ["Bopeebo", "dad", "#9271fd"], 
+        ["Fresh", "dad", "#9271fd"], 
+        ["Dad Battle", "dad", "#9271fd"]
+    ],
+    "weekCharacters": ["dad", "bf", "gf"],
+    "weekBefore": "tutorial",
+    "storyName": "Daddy Dearest",
+    "weekName": "Week1",
+    "freeplayColor": "#9271fd",
+    "startUnlocked": true,
+    "hiddenUntilUnlocked": false,
+    "hideStoryMode": false,
+    "hideFreeplay": false,
+    "bgColors": "#F9CF51"
+}

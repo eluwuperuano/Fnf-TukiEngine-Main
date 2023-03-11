@@ -64,6 +64,5 @@
     "startingAnim": "idle",
     "healthicon": "tankman",
     "antialiasing": true,
-    "character_position": [0, 240],
-    "camera_position": [0, 0]
+    "camerapos": [0, 0]
 }

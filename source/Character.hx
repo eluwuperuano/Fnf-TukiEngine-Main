@@ -1,6 +1,5 @@
 package;
 
-import ui.AtlasText.Case;
 import openfl.utils.Assets;
 import haxe.Json;
 import Section.SwagSection;
@@ -23,17 +22,20 @@ class Character extends FlxSprite
 	public var curCharacter:String = DEFAULT_CHARACTER;
 	public var barColor:FlxColor;
 
+	public var healthIcon:String = 'face';
 	public var holdTimer:Float = 0;
+	public var jsonScale:Float = 1;
+
+	public var camerapos:Array<Float> = [0, 0];
 
 	public var animationNotes:Array<Dynamic> = [];
 
-	public var healthIcon:String = 'face';
-	public var jsonScale:Float = 1;
-
-	public var positionChar:Array<Float> = [0, 0];
-	public var cameraPosition:Array<Float> = [0, 0];
+	public var healthdrain:Bool;
 
 	public static var DEFAULT_CHARACTER:String = 'bf'; //In case a character is missing, it will use BF on its place
+
+	public var notesSkin:String = 'NOTE_assets';
+
 	public function new(x:Float, y:Float, ?character:String = "bf", ?isPlayer:Bool = false)
 	{
 		super(x, y);
@@ -48,7 +50,7 @@ class Character extends FlxSprite
 
 		switch (curCharacter)
 		{
-			//Json File Character 
+			// Character Json
 			default:
 				//Debug.logInfo('Generating character (${curCharacter}) from JSON data...');
 				var characterPath:String = 'characters/' + curCharacter + '.json';
@@ -74,10 +76,6 @@ class Character extends FlxSprite
 				{
 					spriteType = "packer";
 				}
-				if (Assets.exists(Paths.getPath('images/' + data.image + '/Animation.json', TEXT)))
-				{
-					spriteType = "texture";
-				}
 
 				switch (spriteType){
 					
@@ -86,14 +84,12 @@ class Character extends FlxSprite
 					
 					case "sparrow":
 						frames = Paths.getSparrowAtlas(data.image);
-					
-					case "texture":
-						loadMappedAnims();
 				}
 
 				antialiasing = data.antialiasing;
 		
 				flipX = data.flip_x;
+				camerapos = data.camerapos;
 
 				if(data.scale != 1) {
 					jsonScale = data.scale;
@@ -101,10 +97,7 @@ class Character extends FlxSprite
 					updateHitbox();
 				}
 
-				positionChar = data.character_position;
-				cameraPosition = data.camera_position;
-
-				if (frames != null)
+				if (frames != null) {
 					for (anim in data.animations)
 					{
 						var animAnim:String = '' + anim.anim;
@@ -126,24 +119,27 @@ class Character extends FlxSprite
 							addOffset(anim.anim, anim.offsets[0], anim.offsets[1]);
 						}
 					}
+				} else {
+					quickAnimAdd('idle', 'BF idle dance');
+				}
 				var color0 = FlxColor.fromString(data.note_colors[0]);
 				var color1 = FlxColor.fromString(data.note_colors[1]);
 				var color2 = FlxColor.fromString(data.note_colors[2]);
 				var color3 = FlxColor.fromString(data.note_colors[3]);
+			
+				addColorsNote(color0, color1, color2, color3);
 
-				if (!isPlayer)
-					{
-						Note.dadcolorsNote = [color0, color1, color2, color3];
-					}
-					else
-					{
-						Note.bfcolorsNote = [color0, color1, color2, color3];
-					}
+				if(data.healthbar_colors != null && data.healthbar_colors.length > 2)	
+				    barColor = FlxColor.fromString(data.healthbar_colors);
 
-				barColor = FlxColor.fromString(data.healthbar_colors);
 				healthIcon = data.healthicon;
+
+				healthdrain = data.health_drain;
 		
 				playAnim(data.startingAnim);
+
+				if (data.note_skin != null && data.note_skin.length > 0)
+				    notesSkin = data.note_skin;
 		}
 
 		dance();
@@ -169,12 +165,6 @@ class Character extends FlxSprite
 					animation.getByName('singLEFTmiss').frames = oldMiss;
 				}
 			}
-		}
-
-		switch(curCharacter)
-		{
-			case 'pico-speaker':
-				loadMappedAnims();
 		}
 	}
 
@@ -375,49 +365,6 @@ class Character extends FlxSprite
 		frames = tex;
 		
 	}
-
-	/*public function characterFile() {
-		//Debug.logInfo('Generating character (${curCharacter}) from JSON data...');
-
-		// Load the data from JSON and cast it to a struct we can easily read.
-		var jsonData = Paths.file('characters/${curCharacter}');
-		/*if (jsonData == null)
-		{
-			Debug.logError('Failed to parse JSON data for character ${curCharacter}');
-			return;
-		}*/
-
-		/*var data:CharacterFile = cast jsonData;
-
-		var tex:FlxAtlasFrames = Paths.getSparrowAtlas(data.image, 'shared');
-		frames = tex;
-
-		flipX = data.flip_x;
-		if (frames != null)
-			for (anim in data.animations)
-			{
-				var animAnim:String = '' + anim.anim;
-				var animName:String = '' + anim.name;
-				var animFps:Int = anim.fps;
-				var animLoop:Bool = !!anim.loop; //Bruh
-				var animIndices:Array<Int> = anim.indices;
-
-				if (anim.indices != null)
-				{
-					animation.addByIndices(animAnim, animName, animIndices, "", animFps, animLoop);
-				}
-				else
-				{
-					animation.addByPrefix(animAnim, animName, animFps, animLoop);
-				}
-
-				animOffsets[anim.name] = anim.offsets == null ? [0, 0] : anim.offsets;
-			}
-
-		barColor = FlxColor.fromString(data.healthbar_colors);
-
-		playAnim(data.startingAnim);
-	}*/
 }
 
 typedef CharacterFile = {
@@ -433,8 +380,10 @@ typedef CharacterFile = {
 	var healthicon:String;
 	var antialiasing:Bool;
 
-	var character_position:Array<Float>;
-	var camera_position:Array<Float>;
+	var camerapos:Array<Float>;
+	var health_drain:Bool;
+
+	var note_skin:String;
 }
 
 typedef AnimArray = {

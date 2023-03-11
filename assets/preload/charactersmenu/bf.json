@@ -1,0 +1,9 @@
+{
+    "image": "bf",
+    "scale": 0.9,
+	"position": [50, 32],
+    "idle_anim": "1",
+    "confirm_anim": "2",
+    "flipX": false,
+    "color": "#31B0D1"
+}

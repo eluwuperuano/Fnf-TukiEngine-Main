@@ -1,5 +1,6 @@
 package;
 
+import flixel.FlxState;
 import Conductor.BPMChangeEvent;
 import flixel.FlxG;
 import flixel.FlxGame;
@@ -69,5 +70,28 @@ class MusicBeatState extends FlxUIState
 	public function beatHit():Void
 	{
 		// do literally nothing dumbass
+	}
+
+	public static function switchState(nextState:FlxState) {
+		// Custom made Trans in
+		var curState:Dynamic = FlxG.state;
+		var leState:MusicBeatState = curState;
+		if(!FlxTransitionableState.skipNextTransIn) {
+			leState.openSubState(new CustomFadeTransition(0.6, false));
+			if(nextState == FlxG.state) {
+				CustomFadeTransition.finishCallback = function() {
+					FlxG.resetState();
+				};
+				//trace('resetted');
+			} else {
+				CustomFadeTransition.finishCallback = function() {
+					FlxG.switchState(nextState);
+				};
+				//trace('changed state');
+			}
+			return;
+		}
+		FlxTransitionableState.skipNextTransIn = false;
+		FlxG.switchState(nextState);
 	}
 }

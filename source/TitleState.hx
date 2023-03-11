@@ -58,6 +58,10 @@ class TitleState extends MusicBeatState
 
 		super.create();
 
+		FlxG.save.bind('funkin', CoolUtil.getSavePath());
+
+		ClientPref.loadPrefs();
+
 		NGio.noLogin(APIStuff.API);
 
 		#if ng
@@ -69,7 +73,7 @@ class TitleState extends MusicBeatState
 
 		Highscore.load();
 
-		if (FlxG.save.data.weekUnlocked != null)
+		/*if (FlxG.save.data.weekUnlocked != null)
 		{
 			// FIX LATER!!!
 			// WEEK UNLOCK PROGRESSION!!
@@ -81,7 +85,7 @@ class TitleState extends MusicBeatState
 			// QUICK PATCH OOPS!
 			if (!StoryMenuState.weekUnlocked[0])
 				StoryMenuState.weekUnlocked[0] = true;
-		}
+		}*/
 
 		#if FREEPLAY
 		FlxG.switchState(new FreeplayState());

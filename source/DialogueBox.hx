@@ -83,24 +83,22 @@ class DialogueBox extends FlxSpriteGroup
 		switch (PlayState.SONG.song.toLowerCase())
 		{
 			case 'senpai':
-				box.frames = FlxAtlasFrames.fromSparrow('assets/images/weeb/pixelUI/dialogueBox-pixel.png',
-					'assets/images/weeb/pixelUI/dialogueBox-pixel.xml');
+				box.frames = Paths.getSparrowAtlas('weeb/pixelUI/dialogueBox-pixel');
 				box.animation.addByPrefix('normalOpen', 'Text Box Appear', 24, false);
-				box.animation.addByIndices('normal', 'Text Box Appear', [4], "", 24);
+				box.animation.addByIndices('normal', 'Text Box Appear instance 1', [4], "", 24);
 			case 'roses':
-				FlxG.sound.play('assets/sounds/ANGRY_TEXT_BOX' + TitleState.soundExt);
+				FlxG.sound.play(Paths.sound('ANGRY_TEXT_BOX'));
 
-				box.frames = FlxAtlasFrames.fromSparrow('assets/images/weeb/pixelUI/dialogueBox-senpaiMad.png',
-					'assets/images/weeb/pixelUI/dialogueBox-senpaiMad.xml');
+				box.frames = Paths.getSparrowAtlas('weeb/pixelUI/dialogueBox-senpaiMad');
 				box.animation.addByPrefix('normalOpen', 'SENPAI ANGRY IMPACT SPEECH', 24, false);
-				box.animation.addByIndices('normal', 'SENPAI ANGRY IMPACT SPEECH', [4], "", 24);
+				box.animation.addByIndices('normal', 'SENPAI ANGRY IMPACT SPEECH instance 1', [4], "", 24);
 
 			case 'thorns':
-				box.frames = FlxAtlasFrames.fromSparrow('assets/images/weeb/pixelUI/dialogueBox-evil.png', 'assets/images/weeb/pixelUI/dialogueBox-evil.xml');
+				box.frames = Paths.getSparrowAtlas('weeb/pixelUI/dialogueBox-evil');
 				box.animation.addByPrefix('normalOpen', 'Spirit Textbox spawn', 24, false);
-				box.animation.addByIndices('normal', 'Spirit Textbox spawn', [11], "", 24);
+				box.animation.addByIndices('normal', 'Spirit Textbox spawn instance 1', [11], "", 24);
 
-				var face:FlxSprite = new FlxSprite(320, 170).loadGraphic('assets/images/weeb/spiritFaceForward.png');
+				var face:FlxSprite = new FlxSprite(320, 170).loadGraphic(Paths.image('weeb/spiritFaceForward'));
 				face.setGraphicSize(Std.int(face.width * 6));
 				add(face);
 		}

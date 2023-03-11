@@ -1,0 +1,17 @@
+{
+    "songs": [
+        ["Spookeez", "spooky", "#223344"], 
+        ["South", "spooky", "#223344"], 
+        ["Monster", "spooky", "#223344"]
+    ],
+    "weekCharacters": ["spooky", "bf", "gf"],
+    "weekBefore": "Week1",
+    "storyName": "Spooky Mounth",
+    "weekName": "Week2",
+    "freeplayColor": "#FFFFFF",
+    "startUnlocked": true,
+    "hiddenUntilUnlocked": false,
+    "hideStoryMode": false,
+    "hideFreeplay": false,
+    "bgColors": "#F9CF51"
+}

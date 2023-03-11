@@ -1,0 +1,8 @@
+{
+	"image": "parents",
+	"scale": 0.5,
+	"position": [380, 210],
+	"idle_anim": "1",
+	"confirm_anim": "1",
+    "color": "#AF66CE"
+}

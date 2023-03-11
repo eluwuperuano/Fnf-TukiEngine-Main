@@ -1,0 +1,10 @@
+{
+	
+	"image": "dad",
+    "scale": 0.5,
+    "position": [120, 208],
+    "idle_anim": "1",
+    "confirm_anim": "1",
+    "flipX": false,
+    "color": "#AF66CE"
+}

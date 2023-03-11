@@ -13,342 +13,304 @@ import ui.AtlasText;
 import ui.MenuList;
 import ui.TextMenuList;
 
-class ControlsMenu extends ui.OptionsState.Page
+class ControlsMenu extends MusicBeatSubstate
 {
-	inline static public var COLUMNS = 2;
-	static var controlList = Control.createAll();
-	/*
-	 * Defines groups of controls that cannot share inputs, like left and right. Say, if ACCEPT is Z, Back is X,
-	 * if the player sets Back to Z it also set ACCEPT to X. This prevents the player from setting the controls in
-	 * a way the prevents them from changing more controls or exiting the menu.
-	 */
-	static var controlGroups:Array<Array<Control>> = [
-		[NOTE_UP, NOTE_DOWN, NOTE_LEFT, NOTE_RIGHT],
-		[UI_UP, UI_DOWN, UI_LEFT, UI_RIGHT, ACCEPT, BACK]
+	private static var curSelected:Int = 1;
+	private static var curAlt:Bool = false;
+
+	private static var defaultKey:String = 'Reset to Default Keys';
+	private var bindLength:Int = 0;
+
+	var optionShit:Array<Dynamic> = [
+		['NOTES'],
+		['Left', 'note_left'],
+		['Down', 'note_down'],
+		['Up', 'note_up'],
+		['Right', 'note_right'],
+		[''],
+		['UI'],
+		['Left', 'ui_left'],
+		['Down', 'ui_down'],
+		['Up', 'ui_up'],
+		['Right', 'ui_right'],
+		[''],
+		['Reset', 'reset'],
+		['Accept', 'accept'],
+		['Back', 'back'],
+		['Pause', 'pause']
 	];
 
-	var itemGroups:Array<Array<InputItem>> = [for (i in 0...controlGroups.length) []];
+	private var grpOptions:FlxTypedGroup<Alphabet>;
+	private var grpInputs:Array<AttachedText> = [];
+	private var grpInputsAlt:Array<AttachedText> = [];
+	var rebindingKey:Bool = false;
+	var nextAccept:Int = 5;
 
-	var controlGrid:MenuTypedList<InputItem>;
-	var deviceList:TextMenuList;
-	var menuCamera:FlxCamera;
-	var prompt:Prompt;
-	var camFollow:FlxObject;
-	var labels:FlxTypedGroup<AtlasText>;
-
-	var currentDevice:Device = Keys;
-	var deviceListSelected = false;
-
-	public function new()
-	{
+	public function new() {
 		super();
 
-		menuCamera = new FlxCamera();
-		FlxG.cameras.add(menuCamera, false);
-		menuCamera.bgColor = 0x0;
-		camera = menuCamera;
+		var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
+		bg.color = 0xFFea71fd;
+		bg.screenCenter();
+		add(bg);
 
-		labels = new FlxTypedGroup<AtlasText>();
-		var headers = new FlxTypedGroup<AtlasText>();
-		controlGrid = new MenuTypedList(Columns(COLUMNS), Vertical);
+		grpOptions = new FlxTypedGroup<Alphabet>();
+		add(grpOptions);
 
-		add(labels);
-		add(headers);
-		add(controlGrid);
+		optionShit.push(['']);
+		optionShit.push([defaultKey]);
 
-		if (FlxG.gamepads.numActiveGamepads > 0)
-		{
-			var devicesBg = new FlxSprite();
-			devicesBg.makeGraphic(FlxG.width, 100, 0xFFfafd6d);
-			add(devicesBg);
-			deviceList = new TextMenuList(Horizontal, None);
-			add(deviceList);
-			deviceListSelected = true;
-
-			var item;
-
-			item = deviceList.createItem("Keyboard", Bold, selectDevice.bind(Keys));
-			item.x = FlxG.width / 2 - item.width - 30;
-			item.y = (devicesBg.height - item.height) / 2;
-
-			item = deviceList.createItem("Gamepad", Bold, selectDevice.bind(Gamepad(FlxG.gamepads.firstActive.id)));
-			item.x = FlxG.width / 2 + 30;
-			item.y = (devicesBg.height - item.height) / 2;
-		}
-
-		// FlxG.debugger.drawDebug = true;
-		var y = deviceList == null ? 30 : 120;
-		var spacer = 70;
-		var currentHeader:String = null;
-		// list order is determined by enum order
-		for (i in 0...controlList.length)
-		{
-			var control = controlList[i];
-			var name = control.getName();
-			if (currentHeader != "UI_" && name.indexOf("UI_") == 0)
-			{
-				currentHeader = "UI_";
-				headers.add(new BoldText(0, y, "UI")).screenCenter(X);
-				y += spacer;
-			}
-			else if (currentHeader != "NOTE_" && name.indexOf("NOTE_") == 0)
-			{
-				currentHeader = "NOTE_";
-				headers.add(new BoldText(0, y, "NOTES")).screenCenter(X);
-				y += spacer;
+		for (i in 0...optionShit.length) {
+			var isCentered:Bool = false;
+			var isDefaultKey:Bool = (optionShit[i][0] == defaultKey);
+			if(unselectableCheck(i, true)) {
+				isCentered = true;
 			}
 
-			if (currentHeader != null && name.indexOf(currentHeader) == 0)
-				name = name.substr(currentHeader.length);
+			///var optionText:Alphabet = new Alphabet(200, 300, optionShit[i][0], (!isCentered || isDefaultKey));
+			var optionText:Alphabet = new Alphabet(0, (70 * i) + 30, optionShit[i][0], true, false);
+			optionText.isMenuItem = true;
+			optionText.targetY = i;
+			grpOptions.add(optionText);
 
-			var label = labels.add(new BoldText(150, y, name));
-			label.alpha = 0.6;
-			for (i in 0...COLUMNS)
-				createItem(label.x + 400 + i * 300, y, control, i);
+			if(!isCentered) {
+				addBindTexts(optionText, i);
+				bindLength++;
+				if(curSelected < 0) curSelected = i;
+			}
+		}
+		changeSelection();
+	}
 
-			y += spacer;
+	var leaving:Bool = false;
+	var bindingTime:Float = 0;
+	override function update(elapsed:Float) {
+		if(!rebindingKey) {
+			if (controls.UI_UP_P) {
+				changeSelection(-1);
+			}
+			if (controls.UI_DOWN_P) {
+				changeSelection(1);
+			}
+			if (controls.UI_LEFT_P || controls.UI_RIGHT_P) {
+				changeAlt();
+			}
+
+			if (controls.BACK) {
+				ClientPref.reloadControls();
+				FlxG.switchState(new OptionsState());
+				FlxG.sound.play(Paths.sound('cancelMenu'));
+			}
+
+			if(controls.ACCEPT && nextAccept <= 0) {
+				if(optionShit[curSelected][0] == defaultKey) {
+					ClientPref.keyBinds = ClientPref.defaultKeys.copy();
+					reloadKeys();
+					changeSelection();
+					FlxG.sound.play(Paths.sound('confirmMenu'));
+				} else if(!unselectableCheck(curSelected)) {
+					bindingTime = 0;
+					rebindingKey = true;
+					if (curAlt) {
+						grpInputsAlt[getInputTextNum()].alpha = 0;
+					} else {
+						grpInputs[getInputTextNum()].alpha = 0;
+					}
+					FlxG.sound.play(Paths.sound('scrollMenu'));
+				}
+			}
+		} else {
+			var keyPressed:Int = FlxG.keys.firstJustPressed();
+			if (keyPressed > -1) {
+				var keysArray:Array<FlxKey> = ClientPref.keyBinds.get(optionShit[curSelected][1]);
+				keysArray[curAlt ? 1 : 0] = keyPressed;
+
+				var opposite:Int = (curAlt ? 0 : 1);
+				if(keysArray[opposite] == keysArray[1 - opposite]) {
+					keysArray[opposite] = NONE;
+				}
+				ClientPref.keyBinds.set(optionShit[curSelected][1], keysArray);
+
+				reloadKeys();
+				FlxG.sound.play(Paths.sound('confirmMenu'));
+				rebindingKey = false;
+			}
+
+			bindingTime += elapsed;
+			if(bindingTime > 5) {
+				if (curAlt) {
+					grpInputsAlt[curSelected].alpha = 1;
+				} else {
+					grpInputs[curSelected].alpha = 1;
+				}
+				FlxG.sound.play(Paths.sound('scrollMenu'));
+				rebindingKey = false;
+				bindingTime = 0;
+			}
 		}
 
-		camFollow = new FlxObject(FlxG.width / 2, 0, 70, 70);
-		if (deviceList != null)
-		{
-			camFollow.y = deviceList.selectedItem.y;
-			controlGrid.selectedItem.idle();
-			controlGrid.enabled = false;
+		if(nextAccept > 0) {
+			nextAccept -= 1;
 		}
-		else
-			camFollow.y = controlGrid.selectedItem.y;
-
-		menuCamera.follow(camFollow, null, 0.06);
-		var margin = 100;
-		menuCamera.deadzone.set(0, margin, menuCamera.width, menuCamera.height - margin * 2);
-		menuCamera.minScrollY = 0;
-		controlGrid.onChange.add(function(selected)
-		{
-			camFollow.y = selected.y;
-
-			labels.forEach((label) -> label.alpha = 0.6);
-			labels.members[Std.int(controlGrid.selectedIndex / COLUMNS)].alpha = 1.0;
-		});
-
-		prompt = new Prompt("\nPress any key to rebind\n\n\n\n    Escape to cancel", None);
-		prompt.create();
-		prompt.createBgFromMargin(100, 0xFFfafd6d);
-		prompt.back.scrollFactor.set(0, 0);
-		prompt.exists = false;
-		add(prompt);
-	}
-
-	function createItem(x = 0.0, y = 0.0, control:Control, index:Int)
-	{
-		var item = new InputItem(x, y, currentDevice, control, index, onSelect);
-		for (i in 0...controlGroups.length)
-		{
-			if (controlGroups[i].contains(control))
-				itemGroups[i].push(item);
-		}
-
-		return controlGrid.addItem(item.name, item);
-	}
-
-	function onSelect():Void
-	{
-		controlGrid.enabled = false;
-		canExit = false;
-		prompt.exists = true;
-	}
-
-	function goToDeviceList()
-	{
-		controlGrid.selectedItem.idle();
-		labels.members[Std.int(controlGrid.selectedIndex / COLUMNS)].alpha = 0.6;
-		controlGrid.enabled = false;
-		deviceList.enabled = true;
-		canExit = true;
-		camFollow.y = deviceList.selectedItem.y;
-		deviceListSelected = true;
-	}
-
-	function selectDevice(device:Device)
-	{
-		currentDevice = device;
-
-		for (item in controlGrid.members)
-			item.updateDevice(currentDevice);
-
-		var inputName = device == Keys ? "key" : "button";
-		var cancel = device == Keys ? "Escape" : "Back";
-		// todo: alignment
-		if (device == Keys)
-			prompt.setText('\nPress any key to rebind\n\n\n\n    $cancel to cancel');
-		else
-			prompt.setText('\nPress any button\n   to rebind\n\n\n $cancel to cancel');
-
-		controlGrid.selectedItem.select();
-		labels.members[Std.int(controlGrid.selectedIndex / COLUMNS)].alpha = 1.0;
-		controlGrid.enabled = true;
-		deviceList.enabled = false;
-		deviceListSelected = false;
-		canExit = false;
-	}
-
-	override function update(elapsed:Float)
-	{
 		super.update(elapsed);
-
-		var controls = PlayerSettings.player1.controls;
-		if (controlGrid.enabled && deviceList != null && deviceListSelected == false && controls.BACK)
-			goToDeviceList();
-
-		if (prompt.exists)
-		{
-			switch (currentDevice)
-			{
-				case Keys:
-					{
-						// check released otherwise bugs can happen when you change the BACK key
-						var key = FlxG.keys.firstJustReleased();
-						if (key != NONE)
-						{
-							if (key != ESCAPE)
-								onInputSelect(key);
-							closePrompt();
-						}
-					}
-				case Gamepad(id):
-					{
-						var button = FlxG.gamepads.getByID(id).firstJustReleasedID();
-						if (button != NONE)
-						{
-							if (button != BACK)
-								onInputSelect(button);
-							closePrompt();
-						}
-					}
-			}
-		}
 	}
 
-	function onInputSelect(input:Int)
-	{
-		var item = controlGrid.selectedItem;
+	function getInputTextNum() {
+		var num:Int = 0;
+		for (i in 0...curSelected) {
+			if(optionShit[i].length > 1) {
+				num++;
+			}
+		}
+		return num;
+	}
+	
+	function changeSelection(change:Int = 0) {
+		do {
+			curSelected += change;
+			if (curSelected < 0)
+				curSelected = optionShit.length - 1;
+			if (curSelected >= optionShit.length)
+				curSelected = 0;
+		} while(unselectableCheck(curSelected));
 
-		// check if that key is already set for this
-		var column0 = Math.floor(controlGrid.selectedIndex / 2) * 2;
-		for (i in 0...COLUMNS)
-		{
-			if (controlGrid.members[column0 + i].input == input)
-				return;
+		var bullShit:Int = 0;
+
+		for (i in 0...grpInputs.length) {
+			grpInputs[i].alpha = 0.6;
+		}
+		for (i in 0...grpInputsAlt.length) {
+			grpInputsAlt[i].alpha = 0.6;
 		}
 
-		// Check if items in the same group already have the new input
-		for (group in itemGroups)
-		{
-			if (group.contains(item))
-			{
-				for (otherItem in group)
-				{
-					if (otherItem != item && otherItem.input == input)
-					{
-						// replace that input with this items old input.
-						PlayerSettings.player1.controls.replaceBinding(otherItem.control, currentDevice, item.input, otherItem.input);
-						// Don't use resetItem() since items share names/labels
-						otherItem.input = item.input;
-						otherItem.label.text = item.label.text;
+		for (item in grpOptions.members) {
+			item.targetY = bullShit - curSelected;
+			bullShit++;
+
+			if(!unselectableCheck(bullShit-1)) {
+				item.alpha = 0.6;
+				if (item.targetY == 0) {
+					item.alpha = 1;
+					if(curAlt) {
+						for (i in 0...grpInputsAlt.length) {
+							if(grpInputsAlt[i].sprTracker == item) {
+								grpInputsAlt[i].alpha = 1;
+								break;
+							}
+						}
+					} else {
+						for (i in 0...grpInputs.length) {
+							if(grpInputs[i].sprTracker == item) {
+								grpInputs[i].alpha = 1;
+								break;
+							}
+						}
 					}
 				}
 			}
 		}
-
-		PlayerSettings.player1.controls.replaceBinding(item.control, currentDevice, input, item.input);
-		// Don't use resetItem() since items share names/labels
-		item.input = input;
-		item.label.text = item.getLabel(input);
-
-		PlayerSettings.player1.saveControls();
+		FlxG.sound.play(Paths.sound('scrollMenu'));
 	}
 
-	function closePrompt()
-	{
-		prompt.exists = false;
-		controlGrid.enabled = true;
-		if (deviceList == null)
-			canExit = true;
-	}
-
-	override function destroy()
-	{
-		super.destroy();
-
-		itemGroups = null;
-
-		if (FlxG.cameras.list.contains(menuCamera))
-			FlxG.cameras.remove(menuCamera);
-	}
-
-	override function set_enabled(value:Bool)
-	{
-		if (value == false)
-		{
-			controlGrid.enabled = false;
-			if (deviceList != null)
-				deviceList.enabled = false;
+	function changeAlt() {
+		curAlt = !curAlt;
+		for (i in 0...grpInputs.length) {
+			if(grpInputs[i].sprTracker == grpOptions.members[curSelected]) {
+				grpInputs[i].alpha = 0.6;
+				if(!curAlt) {
+					grpInputs[i].alpha = 1;
+				}
+				break;
+			}
 		}
-		else
-		{
-			controlGrid.enabled = !deviceListSelected;
-			if (deviceList != null)
-				deviceList.enabled = deviceListSelected;
+		for (i in 0...grpInputsAlt.length) {
+			if(grpInputsAlt[i].sprTracker == grpOptions.members[curSelected]) {
+				grpInputsAlt[i].alpha = 0.6;
+				if(curAlt) {
+					grpInputsAlt[i].alpha = 1;
+				}
+				break;
+			}
 		}
-		return super.set_enabled(value);
-	}
-}
-
-class InputItem extends TextMenuItem
-{
-	public var device(default, null):Device = Keys;
-	public var control:Control;
-	public var input:Int = -1;
-	public var index:Int = -1;
-
-	public function new(x = 0.0, y = 0.0, device, control, index, ?callback)
-	{
-		this.device = device;
-		this.control = control;
-		this.index = index;
-		this.input = getInput();
-
-		super(x, y, getLabel(input), Default, callback);
+		FlxG.sound.play(Paths.sound('scrollMenu'));
 	}
 
-	public function updateDevice(device:Device)
-	{
-		if (this.device != device)
-		{
-			this.device = device;
-			input = getInput();
-			label.text = getLabel(input);
+	private function unselectableCheck(num:Int, ?checkDefaultKey:Bool = false):Bool {
+		if(optionShit[num][0] == defaultKey) {
+			return checkDefaultKey;
 		}
+		return optionShit[num].length < 2 && optionShit[num][0] != defaultKey;
 	}
 
-	function getInput()
-	{
-		var list = PlayerSettings.player1.controls.getInputsFor(control, device);
-		if (list.length > index)
-		{
-			if (list[index] != FlxKey.ESCAPE || list[index] != FlxGamepadInputID.BACK)
-				return list[index];
+	private function addBindTexts(optionText:Alphabet, num:Int) {
+		var keys:Array<Dynamic> = ClientPref.keyBinds.get(optionShit[num][1]);
+		var text1 = new AttachedText(InputFormatter.getKeyName(keys[0]), 400, -55);
+		text1.setPosition(optionText.x + 400, optionText.y - 55);
+		text1.sprTracker = optionText;
+		grpInputs.push(text1);
+		add(text1);
 
-			if (list.length > ControlsMenu.COLUMNS)
-				// Escape isn't mappable, show a third option, instead.
-				return list[ControlsMenu.COLUMNS];
+		var text2 = new AttachedText(InputFormatter.getKeyName(keys[1]), 650, -55);
+		text2.setPosition(optionText.x + 650, optionText.y - 55);
+		text2.sprTracker = optionText;
+		grpInputsAlt.push(text2);
+		add(text2);
+	}
+
+	function reloadKeys() {
+		while(grpInputs.length > 0) {
+			var item:AttachedText = grpInputs[0];
+			item.kill();
+			grpInputs.remove(item);
+			item.destroy();
+		}
+		while(grpInputsAlt.length > 0) {
+			var item:AttachedText = grpInputsAlt[0];
+			item.kill();
+			grpInputsAlt.remove(item);
+			item.destroy();
 		}
 
-		return -1;
-	}
+		trace('Reloaded keys: ' + ClientPref.keyBinds);
 
-	public function getLabel(input:Int)
-	{
-		return input == -1 ? "---" : InputFormatter.format(input, device);
+		for (i in 0...grpOptions.length) {
+			if(!unselectableCheck(i, true)) {
+				addBindTexts(grpOptions.members[i], i);
+			}
+		}
+
+
+		var bullShit:Int = 0;
+		for (i in 0...grpInputs.length) {
+			grpInputs[i].alpha = 0.6;
+		}
+		for (i in 0...grpInputsAlt.length) {
+			grpInputsAlt[i].alpha = 0.6;
+		}
+
+		for (item in grpOptions.members) {
+			item.targetY = bullShit - curSelected;
+			bullShit++;
+
+			if(!unselectableCheck(bullShit-1)) {
+				item.alpha = 0.6;
+				if (item.targetY == 0) {
+					item.alpha = 1;
+					if(curAlt) {
+						for (i in 0...grpInputsAlt.length) {
+							if(grpInputsAlt[i].sprTracker == item) {
+								grpInputsAlt[i].alpha = 1;
+							}
+						}
+					} else {
+						for (i in 0...grpInputs.length) {
+							if(grpInputs[i].sprTracker == item) {
+								grpInputs[i].alpha = 1;
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 }

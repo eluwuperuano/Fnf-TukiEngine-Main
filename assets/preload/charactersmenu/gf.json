@@ -1,0 +1,10 @@
+{
+	
+	"image": "gf",
+    "scale": 0.5,
+    "position": [70, 150],
+    "idle_anim": "1",
+    "confirm_anim": "2",
+    "flipX": false,
+    "color": "#A5004D"
+}

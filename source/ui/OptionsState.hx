@@ -1,288 +1,129 @@
 package ui;
 
+import Controls.Control;
+import flash.text.TextField;
 import flixel.FlxG;
 import flixel.FlxSprite;
-import flixel.FlxSubState;
-import flixel.addons.transition.FlxTransitionableState;
-import flixel.group.FlxGroup;
-import flixel.util.FlxSignal;
+import flixel.addons.display.FlxGridOverlay;
+import flixel.group.FlxGroup.FlxTypedGroup;
+import flixel.input.keyboard.FlxKey;
+import flixel.math.FlxMath;
+import flixel.text.FlxText;
+import flixel.util.FlxColor;
+import lime.utils.Assets;
 
-// typedef OptionsState = OptionsMenu_old;
-// class OptionsState_new extends MusicBeatState
 class OptionsState extends MusicBeatState
 {
-	var pages = new Map<PageName, Page>();
-	var currentName:PageName = Options;
-	var currentPage(get, never):Page;
+	var options:Array<String> = [
+		'Controls', 'Gameplay'
+	];
+	private var grpOptions:FlxTypedGroup<Alphabet>;
 
-	inline function get_currentPage()
-		return pages[currentName];
+	private static var curSelected:Int = 0;
+	public static var menuBG:FlxSprite;
+
+	function openSelectedSubstate(label:String)
+	{
+		switch (label)
+		{
+			case 'Controls':
+				openSubState(new ui.ControlsMenu());
+			case 'Gameplay':
+				openSubState(new ui.GameplaySubState());
+		}
+	}
+
+	var selectorLeft:Alphabet;
+	var selectorRight:Alphabet;
 
 	override function create()
 	{
-		var menuBG = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
-		menuBG.color = 0xFFea71fd;
-		menuBG.setGraphicSize(Std.int(menuBG.width * 1.1));
-		menuBG.updateHitbox();
-		menuBG.screenCenter();
-		menuBG.scrollFactor.set(0, 0);
-		add(menuBG);
 
-		var options = addPage(Options, new OptionsMenu(false));
-		//var preferences = addPage(Preferences, new PreferencesMenu());
-		var controls = addPage(Controls, new ControlsMenu());
-		// var colors = addPage(Colors, new ColorsMenu());
+		var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
+		bg.color = 0xFFea71fd;
+		bg.updateHitbox();
 
-		/*#if cpp
-		var mods = addPage(Mods, new ModMenu());
-		#*/
+		bg.screenCenter();
+		add(bg);
 
-		if (options.hasMultipleOptions())
+		grpOptions = new FlxTypedGroup<Alphabet>();
+		add(grpOptions);
+
+		for (i in 0...options.length)
 		{
-			options.onExit.add(exitToMainMenu);
-			controls.onExit.add(switchPage.bind(Options));
-			// colors.onExit.add(switchPage.bind(Options));
-			//preferences.onExit.add(switchPage.bind(Options));
-
-			/*#if cpp
-			mods.onExit.add(switchPage.bind(Options));
-			#end*/
-		}
-		else
-		{
-			// No need to show Options page
-			controls.onExit.add(exitToMainMenu);
-			setPage(Controls);
+			var optionText:Alphabet = new Alphabet(0, 0, options[i], true);
+			optionText.screenCenter();
+			optionText.y += (100 * (i - (options.length / 2))) + 50;
+			grpOptions.add(optionText);
 		}
 
-		// disable for intro transition
-		currentPage.enabled = false;
+		selectorLeft = new Alphabet(0, 0, '>', true);
+		add(selectorLeft);
+		selectorRight = new Alphabet(0, 0, '<', true);
+		add(selectorRight);
+
+		changeSelection();
+		ClientPref.saveSettings();
+
 		super.create();
 	}
 
-	function addPage<T:Page>(name:PageName, page:T)
+	override function closeSubState()
 	{
-		page.onSwitch.add(switchPage);
-		pages[name] = page;
-		add(page);
-		page.exists = currentName == name;
-		return page;
-	}
-
-	function setPage(name:PageName)
-	{
-		if (pages.exists(currentName))
-			currentPage.exists = false;
-
-		currentName = name;
-
-		if (pages.exists(currentName))
-			currentPage.exists = true;
-	}
-
-	override function finishTransIn()
-	{
-		super.finishTransIn();
-
-		currentPage.enabled = true;
-	}
-
-	function switchPage(name:PageName)
-	{
-		// Todo animate?
-		setPage(name);
-	}
-
-	function exitToMainMenu()
-	{
-		currentPage.enabled = false;
-		// Todo animate?
-		FlxG.switchState(new MainMenuState());
-	}
-}
-
-class Page extends FlxGroup
-{
-	public var onSwitch(default, null) = new FlxTypedSignal<PageName->Void>();
-	public var onExit(default, null) = new FlxSignal();
-
-	public var enabled(default, set) = true;
-	public var canExit = true;
-
-	var controls(get, never):Controls;
-
-	inline function get_controls()
-		return PlayerSettings.player1.controls;
-
-	var subState:FlxSubState;
-
-	inline function switchPage(name:PageName)
-	{
-		onSwitch.dispatch(name);
-	}
-
-	inline function exit()
-	{
-		onExit.dispatch();
+		super.closeSubState();
+		ClientPref.saveSettings();
 	}
 
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
 
-		if (enabled)
-			updateEnabled(elapsed);
-	}
+		if (controls.UI_UP_P)
+		{
+			changeSelection(-1);
+		}
+		if (controls.UI_DOWN_P)
+		{
+			changeSelection(1);
+		}
 
-	function updateEnabled(elapsed:Float)
-	{
-		if (canExit && controls.BACK)
+		if (controls.BACK)
 		{
 			FlxG.sound.play(Paths.sound('cancelMenu'));
-			exit();
+			MusicBeatState.switchState(new MainMenuState());
+		}
+
+		if (controls.ACCEPT)
+		{
+			openSelectedSubstate(options[curSelected]);
 		}
 	}
 
-	function set_enabled(value:Bool)
+	function changeSelection(change:Int = 0)
 	{
-		return this.enabled = value;
-	}
+		curSelected += change;
+		if (curSelected < 0)
+			curSelected = options.length - 1;
+		if (curSelected >= options.length)
+			curSelected = 0;
 
-	function openPrompt(prompt:Prompt, onClose:Void->Void)
-	{
-		enabled = false;
-		prompt.closeCallback = function()
+		var bullShit:Int = 0;
+
+		for (item in grpOptions.members)
 		{
-			enabled = true;
-			if (onClose != null)
-				onClose();
-		}
+			item.targetY = bullShit - curSelected;
+			bullShit++;
 
-		FlxG.state.openSubState(prompt);
-	}
-
-	override function destroy()
-	{
-		super.destroy();
-		onSwitch.removeAll();
-	}
-}
-
-class OptionsMenu extends Page
-{
-	var items:TextMenuList;
-
-	public function new(showDonate:Bool)
-	{
-		super();
-
-		add(items = new TextMenuList());
-		//createItem('preferences', function() switchPage(Preferences));
-		createItem("controls", function() switchPage(Controls));
-		// createItem('colors', function() switchPage(Colors));
-		/*#if cpp
-		createItem('mods', function() switchPage(Mods));
-		#end*/
-
-		#if CAN_OPEN_LINKS
-		if (showDonate)
-		{
-			var hasPopupBlocker = #if web true #else false #end;
-			createItem('donate', selectDonate, hasPopupBlocker);
-		}
-		#end
-		/*#if newgrounds
-		if (NGio.isLoggedIn)
-			createItem("logout", selectLogout);
-		else
-			createItem("login", selectLogin);
-		#end*/
-		createItem("exit", exit);
-	}
-
-	function createItem(name:String, callback:Void->Void, fireInstantly = false)
-	{
-		var item = items.createItem(0, 100 + items.length * 100, name, Bold, callback);
-		item.fireInstantly = fireInstantly;
-		item.screenCenter(X);
-		return item;
-	}
-
-	override function set_enabled(value:Bool)
-	{
-		items.enabled = value;
-		return super.set_enabled(value);
-	}
-
-	/**
-	 * True if this page has multiple options, excluding the exit option.
-	 * If false, there's no reason to ever show this page.
-	 */
-	public function hasMultipleOptions():Bool
-	{
-		return items.length > 2;
-	}
-
-	#if CAN_OPEN_LINKS
-	function selectDonate()
-	{
-		#if linux
-		Sys.command('/usr/bin/xdg-open', ["https://ninja-muffin24.itch.io/funkin", "&"]);
-		#else
-		FlxG.openURL('https://ninja-muffin24.itch.io/funkin');
-		#end
-	}
-	#end
-
-	/*#if newgrounds
-	function selectLogin()
-	{
-		openNgPrompt(NgPrompt.showLogin());
-	}
-
-	function selectLogout()
-	{
-		openNgPrompt(NgPrompt.showLogout());
-	}
-
-	/**
-	 * Calls openPrompt and redraws the login/logout button
-	 * @param prompt 
-	 * @param onClose 
-	 */
-	/*public function openNgPrompt(prompt:Prompt, ?onClose:Void->Void)
-	{
-		var onPromptClose = checkLoginStatus;
-		if (onClose != null)
-		{
-			onPromptClose = function()
+			item.alpha = 0.6;
+			if (item.targetY == 0)
 			{
-				checkLoginStatus();
-				onClose();
+				item.alpha = 1;
+				selectorLeft.x = item.x - 63;
+				selectorLeft.y = item.y;
+				selectorRight.x = item.x + item.width + 15;
+				selectorRight.y = item.y;
 			}
 		}
-
-		openPrompt(prompt, onPromptClose);
+		FlxG.sound.play(Paths.sound('scrollMenu'));
 	}
-
-	function checkLoginStatus()
-	{
-		// this shit don't work!! wtf!!!!
-		var prevLoggedIn = items.has("logout");
-		if (prevLoggedIn && !NGio.isLoggedIn)
-			items.resetItem("logout", "login", selectLogin);
-		else if (!prevLoggedIn && NGio.isLoggedIn)
-			items.resetItem("login", "logout", selectLogout);
-	}
-	#end*/
-}
-
-enum PageName
-{
-	Options;
-	Controls;
-	Colors;
-	//Mods;
-	//Preferences;
-	//Graphics;
 }

@@ -1,0 +1,8 @@
+{
+	"image": "mom",
+	"scale": 0.4,
+	"position": [100, 220],
+	"idle_anim": "1",
+	"confirm_anim": "1",
+    "color": "#D8558E"
+}

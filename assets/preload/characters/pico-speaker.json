@@ -40,6 +40,5 @@
     "startingAnim": "shoot1",
     "healthicon": "pico",
     "antialiasing": true,
-    "character_position": [0, 0],
-    "camera_position": [120, -125]
+    "camerapos": [0, 0]
 }

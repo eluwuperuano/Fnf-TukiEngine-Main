@@ -1,0 +1,17 @@
+{
+    "songs": [
+        ["Pico", "pico", "#941653"], 
+        ["Philly", "pico", "#941653"], 
+        ["Blammed", "pico", "#941653"]
+    ],
+    "weekCharacters": ["pico", "bf", "gf"],
+    "weekBefore": "Week2",
+    "storyName": "Pico",
+    "weekName": "Week3",
+    "freeplayColor": "#941653",
+    "startUnlocked": true,
+    "hiddenUntilUnlocked": false,
+    "hideStoryMode": false,
+    "hideFreeplay": false,
+    "bgColors": "#F9CF51"
+}

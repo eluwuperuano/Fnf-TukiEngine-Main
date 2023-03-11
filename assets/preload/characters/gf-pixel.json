@@ -39,7 +39,7 @@
     "note_colors": ["#A5004D", "#A5004D", "#A5004D", "#A5004D"],
     "startingAnim": "danceRight",
     "healthicon": "gf",
+    "pixel_note": true,
     "antialiasing": false,
-    "character_position": [0, 0],
-    "camera_position": [0, 0]
+    "camerapos": [0, 0]
 }

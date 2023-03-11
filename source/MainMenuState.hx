@@ -1,6 +1,5 @@
 package;
 
-import ui.OptionsState;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
@@ -13,6 +12,7 @@ import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
 import io.newgrounds.NG;
 import lime.app.Application;
+import ui.OptionsState;
 
 using StringTools;
 

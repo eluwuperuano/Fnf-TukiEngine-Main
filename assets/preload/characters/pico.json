@@ -48,6 +48,5 @@
     "startingAnim": "idle",
     "healthicon": "pico",
     "antialiasing": true,
-    "character_position": [0, 300],
-    "camera_position": [600, 0]
+    "camerapos": [0, 0]
 }

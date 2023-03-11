@@ -1,0 +1,17 @@
+{
+    "songs": [
+        ["Senpai", "senpai", "#ff78bf"], 
+        ["Roses", "senpai", "#ff78bf"], 
+        ["Thorns", "spirit", "#ff78bf"]
+    ],
+    "weekCharacters": ["senpai", "bf", "gf"],
+    "weekBefore": "Week5",
+    "storyName": "Pixel Game",
+    "weekName": "Week6",
+    "freeplayColor": "#ff78bf",
+    "startUnlocked": true,
+    "hiddenUntilUnlocked": false,
+    "hideStoryMode": false,
+    "hideFreeplay": false,
+    "bgColors": "#F9CF51"
+}

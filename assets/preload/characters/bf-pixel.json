@@ -79,7 +79,8 @@
     "note_colors": ["#E276FF", "#3DCAFF", "#71E300", "#FF884E"],
     "startingAnim": "idle",
     "healthicon": "bf-pixel",
+    "pixel_note": true,
     "antialiasing": false,
-    "character_position": [0, 350],
-    "camera_position": [0, 200]
+    "camerapos": [-40, -100],
+    "health_drain": true
 }

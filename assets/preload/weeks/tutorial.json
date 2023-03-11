@@ -1,0 +1,15 @@
+{
+    "songs": [
+        ["tutorial", "gf", "#9271fd"]
+    ],
+    "weekCharacters": ["", "bf", "gf"],
+    "weekBefore": "",
+    "storyName": "tutorial",
+    "weekName": "",
+    "freeplayColor": "#9271fd",
+    "startUnlocked": true,
+    "hiddenUntilUnlocked": false,
+    "hideStoryMode": false,
+    "hideFreeplay": false,
+    "bgColors": "#F9CF51"
+}
