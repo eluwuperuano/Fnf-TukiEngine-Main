@@ -35,8 +35,6 @@ class NoteSplash extends FlxSprite
 		animation.curAnim.frameRate += FlxG.random.int(-2, 2);
 		updateHitbox();
 
-		color = Note.bfcolorsNote[noteData];
-
 		offset.set(width * 0.3, height * 0.3);
 	}
 

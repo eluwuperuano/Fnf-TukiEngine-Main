@@ -121,5 +121,7 @@
     "healthicon": "bf",
     "antialiasing": true,
     "camerapos": [0, 0],
-    "health_drain": true
+	"charpos": [0, 350],
+    "health_drain": true,
+	"sing": 4
 }

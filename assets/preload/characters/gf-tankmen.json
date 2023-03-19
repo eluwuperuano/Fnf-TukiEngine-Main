@@ -32,5 +32,7 @@
     "startingAnim": "danceRight",
     "healthicon": "gf",
     "antialiasing": true,
-    "camerapos": [0, 0]
+    "camerapos": [0, 140],
+    "charpos": [0, 0],
+	"sing": 4
 }

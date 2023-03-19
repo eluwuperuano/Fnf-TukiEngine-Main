@@ -1,52 +1,66 @@
 {
-    "image": "characters/BOYFRIEND",
-    "scale": 1,
-    "flip_x": true,
     "animations": [
-    {
-        "anim": "idle",
-        "name": "BF idle dance",
-        "fps": 24,
-        "loop": false,
-        "indices": [],
-        "offsets": [-5, 0]
-    },
-    {
-        "anim": "singUP",
-        "name": "BF NOTE UP0",
-        "fps": 24,
-        "loop": false,
-        "indices": [],
-        "offsets": [-5, 0]
-    },
-    {
-        "anim": "singLEFT",
-        "name": "BF NOTE LEFT0",
-        "fps": 24,
-        "loop": false,
-        "indices": [],
-        "offsets": [-5, 0]
-    },
-    {
-        "anim": "singRIGHT",
-        "name": "BF NOTE RIGHT0",
-        "fps": 24,
-        "loop": false,
-        "indices": [],
-        "offsets": [-5, 0]
-    },
-    {
-        "anim": "singDOWN",
-        "name": "BF NOTE DOWN0",
-        "fps": 24,
-        "loop": false,
-        "indices": [],
-        "offsets": [-5, 0]
-    }],
-    "healthbar_colors": "#FFFFFF",
-    "note_colors": ["#D400FF", "#00E5FF", "#2BFF00", "#FF0000"],
-    "startingAnim": "idle",
-    "healthicon": "tankman",,
+        {
+            "offsets": [
+                -5,
+                0
+            ],
+            "loop": false,
+            "fps": 24,
+            "anim": "idle",
+            "indices": [],
+            "name": "BF idle dance"
+        },
+        {
+            "offsets": [
+                -5,
+                40
+            ],
+            "loop": false,
+            "fps": 24,
+            "anim": "singUP",
+            "indices": [],
+            "name": "BF NOTE UP0"
+        },
+        {
+            "offsets": [
+                -35,
+                0
+            ],
+            "loop": false,
+            "fps": 24,
+            "anim": "singLEFT",
+            "indices": [],
+            "name": "BF NOTE LEFT0"
+        },
+        {
+            "offsets": [
+                40,
+                0
+            ],
+            "loop": false,
+            "fps": 24,
+            "anim": "singRIGHT",
+            "indices": [],
+            "name": "BF NOTE RIGHT0"
+        },
+        {
+            "offsets": [
+                -20,
+                -44
+            ],
+            "loop": false,
+            "fps": 24,
+            "anim": "singDOWN",
+            "indices": [],
+            "name": "BF NOTE DOWN0"
+        }
+    ],
+    "image": "characters/BOYFRIEND",
+    "healthicon": "bf",
+    "flip_x": true,
     "antialiasing": true,
-    "camerapos": [0, 0]
+    "camera_position": [0, 0],
+    "scale": 1,
+	"sing": 4
 }

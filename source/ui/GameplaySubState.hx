@@ -1,6 +1,5 @@
 package ui;
 
-import flixel.addons.ui.FlxUICheckBox;
 import flash.text.TextField;
 import flixel.FlxG;
 import flixel.FlxSprite;
@@ -25,39 +24,19 @@ import Controls;
 
 using StringTools;
 
-class GameplaySubState extends MusicBeatSubstate
+class GameplaySubState extends BaseOptionsMenu
 {
-	var option1:FlxUICheckBox;
-
-	override function create()
+	public function new()
 	{
-		FlxG.mouse.visible = true;
+		title = 'Gameplay Settings';
 
-		var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
-		bg.color = FlxColor.fromRGB(FlxG.random.int(0, 255), FlxG.random.int(0, 255), FlxG.random.int(0, 255));
-		bg.updateHitbox();
-		bg.screenCenter();
-		add(bg);
+		var option:Option = new Option('Ghost Tapping',
+			"no misses to press",
+			'ghostTapping',
+			'bool',
+			true);
+		addOption(option);
 
-		option1 = new FlxUICheckBox(40, 30, null, null, "ghostTapping", 300);
-		option1.name = 'ghotTaping';
-		option1.checked = true;
-		option1.scale.x = 5;
-		option1.scale.y = 5;
-		option1.screenCenter(X);
-		add(option1);
-		ClientPref.ghostTapping == option1.checked;
-    }
-	
-
-	override function update(elapsed:Float) {
-		super.update(elapsed);
-
-		if (controls.BACK)
-		{
-			FlxG.mouse.visible = false;
-			FlxG.sound.play(Paths.sound('cancelMenu'));
-			MusicBeatState.switchState(new ui.OptionsState());
-		}
+		super();
 	}
 }

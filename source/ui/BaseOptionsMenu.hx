@@ -31,6 +31,8 @@ class BaseOptionsMenu extends MusicBeatSubstate
 	private var optionsArray:Array<Option>;
 
 	private var grpOptions:FlxTypedGroup<Alphabet>;
+	private var checkboxGroup:FlxTypedGroup<CheckboxThingie>;
+	private var grpTexts:FlxTypedGroup<AttachedText>;
 
 	private var boyfriend:Character = null;
 	private var descBox:FlxSprite;
@@ -44,36 +46,63 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		super();
 
 		if(title == null) title = 'Options';
-		if(rpcTitle == null) rpcTitle = 'Options Menu';
-		
 		
 		var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
-		bg.color = 0xFFea71fd;
+		bg.color = FlxColor.fromRGB(FlxG.random.int(0, 255), FlxG.random.int(0, 255), FlxG.random.int(0, 255));
 		bg.screenCenter();
+		bg.antialiasing = true;
 		add(bg);
 
 		// avoids lagspikes while scrolling through menus!
 		grpOptions = new FlxTypedGroup<Alphabet>();
 		add(grpOptions);
 
+		grpTexts = new FlxTypedGroup<AttachedText>();
+		add(grpTexts);
+
+		checkboxGroup = new FlxTypedGroup<CheckboxThingie>();
+		add(checkboxGroup);
+
 		descBox = new FlxSprite().makeGraphic(1, 1, FlxColor.BLACK);
 		descBox.alpha = 0.6;
 		add(descBox);
 
+		var titleText:Alphabet = new Alphabet(0, 40, title, true);
+		/*titleText.scaleX = 0.6;
+		titleText.scaleY = 0.6;*/
+		titleText.alpha = 0.4;
+		add(titleText);
+
 		descText = new FlxText(50, 600, 1180, "", 32);
-		descText.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		descText.setFormat(Paths.font("fnf.ttf"), 32, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		descText.scrollFactor.set();
 		descText.borderSize = 2.4;
 		add(descText);
 
 		for (i in 0...optionsArray.length)
 		{
-			var optionText:Alphabet = new Alphabet(290, 260, optionsArray[i].name, false);
-			optionText.isMenuItem = true;
-			/*optionText.forceX = 300;
-			optionText.yMult = 90;*/
+			var optionText:Alphabet = new Alphabet(0, (70 * i), optionsArray[i].name, true, false);
+			optionText.centered = true;
+			//optionText.screenCenter(X);
 			optionText.targetY = i;
 			grpOptions.add(optionText);
+
+			if(optionsArray[i].type == 'bool') {
+				var checkbox:CheckboxThingie = new CheckboxThingie(optionText.x - 105, optionText.y, optionsArray[i].getValue() == true);
+				checkbox.sprTracker = optionText;
+				checkbox.ID = i;
+				checkboxGroup.add(checkbox);
+			} else {
+				optionText.x -= 80;
+				//optionText.startPosition.x -= 80;
+				//optionText.xAdd -= 80;
+				var valueText:AttachedText = new AttachedText('' + optionsArray[i].getValue(), optionText.width + 80);
+				valueText.sprTracker = optionText;
+				valueText.copyAlpha = true;
+				valueText.ID = i;
+				grpTexts.add(valueText);
+				optionsArray[i].setChild(valueText);
+			}
 			//optionText.snapToPosition(); //Don't ignore me when i ask for not making a fucking pull request to uncomment this line ok
 
 			if(optionsArray[i].showBoyfriend && boyfriend == null)
@@ -84,6 +113,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		}
 
 		changeSelection();
+		reloadCheckboxes();
 	}
 
 	public function addOption(option:Option) {
@@ -125,6 +155,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 					FlxG.sound.play(Paths.sound('scrollMenu'));
 					curOption.setValue((curOption.getValue() == true) ? false : true);
 					curOption.change();
+					reloadCheckboxes();
 				}
 			} else {
 				if(controls.UI_LEFT || controls.UI_RIGHT) {
@@ -215,6 +246,7 @@ class BaseOptionsMenu extends MusicBeatSubstate
 					leOption.change();
 				}
 				FlxG.sound.play(Paths.sound('cancelMenu'));
+				reloadCheckboxes();
 			}
 		}
 
@@ -267,6 +299,12 @@ class BaseOptionsMenu extends MusicBeatSubstate
 				item.alpha = 1;
 			}
 		}
+		for (text in grpTexts) {
+			text.alpha = 0.6;
+			if(text.ID == curSelected) {
+				text.alpha = 1;
+			}
+		}
 
 		descBox.setPosition(descText.x - 10, descText.y - 10);
 		descBox.setGraphicSize(Std.int(descText.width + 20), Std.int(descText.height + 25));
@@ -296,5 +334,11 @@ class BaseOptionsMenu extends MusicBeatSubstate
 		boyfriend.dance();
 		insert(1, boyfriend);
 		boyfriend.visible = wasVisible;
+	}
+
+	function reloadCheckboxes() {
+		for (checkbox in checkboxGroup) {
+			checkbox.daValue = (optionsArray[checkbox.ID].getValue() == true);
+		}
 	}
 }

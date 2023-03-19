@@ -38,8 +38,9 @@
     "healthbar_colors": "#7BD6F6",
     "note_colors": ["#E276FF", "#3DCAFF", "#71E300", "#FF884E"],
     "startingAnim": "firstDeath",
-    "healthicon": "bf-pixel"
+    "healthicon": "bf-pixel",
     "antialiasing": false,
     "camerapos": [0, 0],
-    "health_drain": true
+    "health_drain": true,
+	"sing": 4
 }

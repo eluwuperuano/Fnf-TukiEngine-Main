@@ -1,5 +1,6 @@
 package;
 
+import lime.graphics.Image;
 import openfl.utils.Assets;
 import haxe.Json;
 import Section.SwagSection;
@@ -20,13 +21,16 @@ class Character extends FlxSprite
 
 	public var isPlayer:Bool = false;
 	public var curCharacter:String = DEFAULT_CHARACTER;
-	public var barColor:FlxColor;
+	public var barColor:String = '#FFFFFF';
+	public var notesColor:Array<String> = ['#FFFFFF', '#FFFFFF', '#FFFFFF', '#FFFFFF'];
 
 	public var healthIcon:String = 'face';
 	public var holdTimer:Float = 0;
 	public var jsonScale:Float = 1;
 
+	public var positionArray:Array<Float> = [0, 0];
 	public var camerapos:Array<Float> = [0, 0];
+	public var singDuration:Float = 4;
 
 	public var animationNotes:Array<Dynamic> = [];
 
@@ -35,12 +39,19 @@ class Character extends FlxSprite
 	public static var DEFAULT_CHARACTER:String = 'bf'; //In case a character is missing, it will use BF on its place
 
 	public var notesSkin:String = 'NOTE_assets';
+	public var image:String = '';
+	public var originalFlipX:Bool = false;
+	public var elAntialiasing:Bool = true;
+	public var animationsArray:Array<AnimArray> = [];
+
+
+	public var animIdle:String;
 
 	public function new(x:Float, y:Float, ?character:String = "bf", ?isPlayer:Bool = false)
 	{
 		super(x, y);
 
-		barColor = isPlayer ? 0xFF66FF33 : 0xFFFF0000;
+		//barColor = isPlayer ? 0xFF66FF33 : 0xFFFF0000;
 		animOffsets = new Map<String, Array<Dynamic>>();
 		curCharacter = character;
 		this.isPlayer = isPlayer;
@@ -85,11 +96,14 @@ class Character extends FlxSprite
 					case "sparrow":
 						frames = Paths.getSparrowAtlas(data.image);
 				}
+				image = data.image;
 
 				antialiasing = data.antialiasing;
 		
 				flipX = data.flip_x;
 				camerapos = data.camerapos;
+				positionArray = data.charpos;
+				singDuration = data.sing;
 
 				if(data.scale != 1) {
 					jsonScale = data.scale;
@@ -97,8 +111,10 @@ class Character extends FlxSprite
 					updateHitbox();
 				}
 
-				if (frames != null) {
-					for (anim in data.animations)
+				animationsArray = data.animations;
+				if (animationsArray != null && animationsArray.length > 0)
+				{
+					for (anim in animationsArray)
 					{
 						var animAnim:String = '' + anim.anim;
 						var animName:String = '' + anim.name;
@@ -122,25 +138,27 @@ class Character extends FlxSprite
 				} else {
 					quickAnimAdd('idle', 'BF idle dance');
 				}
-				var color0 = FlxColor.fromString(data.note_colors[0]);
-				var color1 = FlxColor.fromString(data.note_colors[1]);
-				var color2 = FlxColor.fromString(data.note_colors[2]);
-				var color3 = FlxColor.fromString(data.note_colors[3]);
-			
-				addColorsNote(color0, color1, color2, color3);
+
+				notesColor = [data.note_colors[0], data.note_colors[1], data.note_colors[2], data.note_colors[3]];
 
 				if(data.healthbar_colors != null && data.healthbar_colors.length > 2)	
-				    barColor = FlxColor.fromString(data.healthbar_colors);
+				    barColor = data.healthbar_colors;
 
 				healthIcon = data.healthicon;
 
 				healthdrain = data.health_drain;
 		
-				playAnim(data.startingAnim);
+				//playAnim(data.startingAnim);
+
+				animIdle = data.startingAnim;
+				playAnim(animIdle);
 
 				if (data.note_skin != null && data.note_skin.length > 0)
 				    notesSkin = data.note_skin;
 		}
+		originalFlipX = flipX;
+		elAntialiasing = antialiasing;
+		
 
 		dance();
 		animation.finish();
@@ -193,7 +211,7 @@ class Character extends FlxSprite
 		return FlxSort.byValues(FlxSort.ASCENDING, val1[0], val2[0]);
 	}
 
-	function quickAnimAdd(name:String, prefix:String)
+	public function quickAnimAdd(name:String, prefix:String)
 	{
 		animation.addByPrefix(name, prefix, 24, false);
 	}
@@ -211,30 +229,27 @@ class Character extends FlxSprite
 
 	override function update(elapsed:Float)
 	{
-		if (!curCharacter.startsWith('bf'))
+
+		if (!isPlayer)
 		{
 			if (animation.curAnim.name.startsWith('sing'))
 			{
 				holdTimer += elapsed;
 			}
 
-			var dadVar:Float = 4;
-
-			if (curCharacter == 'dad')
-				dadVar = 6.1;
-			if (holdTimer >= Conductor.stepCrochet * dadVar * 0.001)
+			if (holdTimer >= Conductor.stepCrochet * 0.001 * singDuration)
 			{
 				dance();
 				holdTimer = 0;
 			}
 		}
 
-		if (curCharacter.endsWith('-car'))
+		/*if (curCharacter.endsWith('-car'))
 		{
 			// looping hair anims after idle finished
 			if (!animation.curAnim.name.startsWith('sing') && animation.curAnim.finished)
 				playAnim('idleHair');
-		}
+		}*/
 
 		switch (curCharacter)
 		{
@@ -348,7 +363,7 @@ class Character extends FlxSprite
 		animOffsets[name] = [x, y];
 	}
 
-	public function addColorsNote(color0:Int, color1:Int, color2:Int, color3:Int)
+	/*public function addColorsNote(color0:Int, color1:Int, color2:Int, color3:Int)
 	{
 		if (!isPlayer)
 		{
@@ -358,7 +373,7 @@ class Character extends FlxSprite
 		{
 			Note.bfcolorsNote = [color0, color1, color2, color3];
 		}
-	}
+	}*/
 
 	public function addImageCharacter(name:String, library:String = 'shared') {
 		var tex = Paths.getSparrowAtlas(name, library);
@@ -370,8 +385,8 @@ class Character extends FlxSprite
 typedef CharacterFile = {
 	var image:String;
 	var scale:Float;
-
 	var flip_x:Bool;
+
 	var animations:Array<AnimArray>;
 	
 	var healthbar_colors:String;
@@ -379,11 +394,12 @@ typedef CharacterFile = {
 	var startingAnim:String;
 	var healthicon:String;
 	var antialiasing:Bool;
+	var note_skin:String;
 
 	var camerapos:Array<Float>;
 	var health_drain:Bool;
-
-	var note_skin:String;
+	var charpos:Array<Float>;
+	var sing:Float;
 }
 
 typedef AnimArray = {

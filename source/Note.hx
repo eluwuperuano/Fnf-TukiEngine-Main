@@ -33,8 +33,8 @@ class Note extends FlxSprite
 	public static var BLUE_NOTE:Int = 1;
 	public static var RED_NOTE:Int = 3;
 
-	public static var dadcolorsNote:Array<Int> = [0xFFD400FF,0xFF00E5FF,0xFF2BFF00,0xFFFF0000];
-	public static var bfcolorsNote:Array<Int> = [0xFFD400FF,0xFF00E5FF,0xFF2BFF00,0xFFFF0000];
+	/*public static var dadcolorsNote:Array<Int> = [0xFFD400FF,0xFF00E5FF,0xFF2BFF00,0xFFFF0000];
+	public static var bfcolorsNote:Array<Int> = [0xFFD400FF,0xFF00E5FF,0xFF2BFF00,0xFFFF0000];*/
 	public var isPlayer:Bool = false;
 	public var player:Int;
 
@@ -42,13 +42,6 @@ class Note extends FlxSprite
 	
 	private var colArray:Array<String> = ['purple', 'blue', 'green', 'red'];
 	private var pixelInt:Array<Int> = [0, 1, 2, 3];
-	
-	//DAD
-	public static var texturedadnote:String = 'NOTE_assets';
-	public static var texturedadpixelnote:String = 'arrow';
-	//BF
-	public static var texturebfnote:String = 'NOTE_assets';
-	public static var texturebfpixelnote:String = 'arrow';
 
 	public static var curNoteSkin:String = '';
 

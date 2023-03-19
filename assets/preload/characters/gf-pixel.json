@@ -41,5 +41,7 @@
     "healthicon": "gf",
     "pixel_note": true,
     "antialiasing": false,
-    "camerapos": [0, 0]
+    "camerapos": [-20, 80],
+    "charpos": [0, 0],
+	"sing": 4
 }

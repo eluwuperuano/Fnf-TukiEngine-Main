@@ -48,5 +48,7 @@
     "startingAnim": "idle",
     "healthicon": "pico",
     "antialiasing": true,
-    "camerapos": [0, 0]
+    "camerapos": [0, 0],
+    "charpos": [0, 300],
+	"sing": 4
 }

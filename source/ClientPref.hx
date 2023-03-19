@@ -8,6 +8,8 @@ import flixel.util.FlxSave;
 
 class ClientPref
 {
+	public static var globalAntialiasing:Bool = true;
+
 	public static var ghostTapping:Bool = true;
 
 	// Every key has two binds, add your key bind down here and then add your control on options/ControlsSubState.hx and Controls.hx
@@ -39,6 +41,7 @@ class ClientPref
 
 	public static function saveSettings()
 	{
+		FlxG.save.data.globalAntialiasing = globalAntialiasing;
 		FlxG.save.data.ghostTapping = ghostTapping;
 		FlxG.save.data.colorsNote = colorsNote;
 
@@ -54,6 +57,10 @@ class ClientPref
 
 	public static function loadPrefs()
 	{
+		if (FlxG.save.data.globalAntialiasing != null)
+		{
+			globalAntialiasing = FlxG.save.data.globalAntialiasing;
+		}
 		if (FlxG.save.data.ghostTapping != null)
 		{
 			ghostTapping = FlxG.save.data.ghostTapping;
