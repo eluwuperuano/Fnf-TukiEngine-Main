@@ -1,1 +1,104 @@
-{"animations":[{"offsets":[0,0],"loop":false,"fps":24,"anim":"idle","indices":[],"name":"Tankman Idle Dance"},{"offsets":[24,56],"loop":false,"fps":24,"anim":"singUP","indices":[],"name":"Tankman UP note "},{"offsets":[100,-14],"loop":false,"fps":24,"anim":"singLEFT","indices":[],"name":"Tankman Right Note "},{"offsets":[-1,-7],"loop":false,"fps":24,"anim":"singRIGHT","indices":[],"name":"Tankman Note Left "},{"offsets":[98,-90],"loop":false,"fps":24,"anim":"singDOWN","indices":[],"name":"Tankman DOWN note "},{"offsets":[-2,20],"loop":false,"fps":24,"anim":"singDOWN-alt","indices":[],"name":"PRETTY GOOD"},{"offsets":[-9,-8],"loop":false,"fps":24,"anim":"singUP-alt","indices":[],"name":"TANKMAN UGH"}],"note_skin":"NOTE_assets","image":"characters/tankmanCaptain","charpos":[0,240],"health_drain":false,"healthicon":"tankman","note_colors":["#E1E1E1","#6f6f6f","#E1E1E1","#6f6f6f"],"startingAnim":"idle","camerapos":[0,0],"flip_x":true,"healthbar_colors":"#E1E1E1","antialiasing":true,"sing":4,"scale":1}
+{
+    "animations": [
+        {
+            "offsets": [
+                0,
+                0
+            ],
+            "loop": false,
+            "fps": 24,
+            "anim": "idle",
+            "indices": [],
+            "name": "Tankman Idle Dance"
+        },
+        {
+            "offsets": [
+                24,
+                56
+            ],
+            "loop": false,
+            "fps": 24,
+            "anim": "singUP",
+            "indices": [],
+            "name": "Tankman UP note "
+        },
+        {
+            "offsets": [
+                100,
+                -14
+            ],
+            "loop": false,
+            "fps": 24,
+            "anim": "singLEFT",
+            "indices": [],
+            "name": "Tankman Right Note "
+        },
+        {
+            "offsets": [
+                -1,
+                -7
+            ],
+            "loop": false,
+            "fps": 24,
+            "anim": "singRIGHT",
+            "indices": [],
+            "name": "Tankman Note Left "
+        },
+        {
+            "offsets": [
+                98,
+                -90
+            ],
+            "loop": false,
+            "fps": 24,
+            "anim": "singDOWN",
+            "indices": [],
+            "name": "Tankman DOWN note "
+        },
+        {
+            "offsets": [
+                -2,
+                20
+            ],
+            "loop": false,
+            "fps": 24,
+            "anim": "singDOWN-alt",
+            "indices": [],
+            "name": "PRETTY GOOD"
+        },
+        {
+            "offsets": [
+                -9,
+                -8
+            ],
+            "loop": false,
+            "fps": 24,
+            "anim": "singUP-alt",
+            "indices": [],
+            "name": "TANKMAN UGH"
+        }
+    ],
+    "note_skin": "NOTE_assets",
+    "image": "characters/tankmanCaptain",
+    "charpos": [
+        0,
+        240
+    ],
+    "health_drain": false,
+    "healthicon": "tankman",
+    "note_colors": [
+        "#E1E1E1",
+        "#6f6f6f",
+        "#E1E1E1",
+        "#6f6f6f"
+    ],
+    "camerapos": [
+        0,
+        0
+    ],
+    "flip_x": true,
+    "healthbar_colors": "#E1E1E1",
+    "antialiasing": true,
+    "sing": 4,
+    "scale": 1
+}

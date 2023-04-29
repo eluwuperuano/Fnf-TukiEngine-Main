@@ -84,8 +84,12 @@
         "offsets": [7, 4]
     }],
     "healthbar_colors": "#31B0D1",
-    "note_colors": ["#D400FF", "#00E5FF", "#2BFF00", "#FF0000"],
-    "startingAnim": "idle",
+    "note_colors": [
+        "#C24B99",
+        "#00FFFF",
+        "#12FA05",
+        "#F9393F"
+    ],
     "healthicon": "bf",
     "antialiasing": true,
     "camerapos": [0, 0],

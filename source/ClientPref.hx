@@ -8,6 +8,8 @@ import flixel.util.FlxSave;
 
 class ClientPref
 {
+	public static var noteOffset:Int = 0;
+
 	public static var globalAntialiasing:Bool = true;
 
 	public static var ghostTapping:Bool = true;
@@ -33,6 +35,8 @@ class ClientPref
 	public static var colorsNote:Int = 0xFFFFFFFF;
 	public static var middleScroll:Bool = false;
 	public static var downScroll:Bool = false;
+	public static var noteRainbow:Bool = true;
+	public static var customArrowColors_allChars:Bool = false;
 
 	public static function loadDefaultKeys()
 	{
@@ -53,6 +57,8 @@ class ClientPref
 		FlxG.log.add("Settings saved!");
 		FlxG.save.data.middleScroll = middleScroll;
 		FlxG.save.data.downScroll = downScroll;
+		FlxG.save.data.noteRainbow = noteRainbow;
+		FlxG.save.data.customArrowColors_allChars = customArrowColors_allChars;
 	}
 
 	public static function loadPrefs()
@@ -88,6 +94,14 @@ class ClientPref
 		if (FlxG.save.data.downScroll != null)
 		{
 			downScroll = FlxG.save.data.downScroll;
+		}
+		if (FlxG.save.data.noteRainbow != null)
+		{
+			noteRainbow = FlxG.save.data.noteRainbow;
+		}
+		if (FlxG.save.data.customArrowColors_allChars != null)
+		{
+			customArrowColors_allChars = FlxG.save.data.customArrowColors_allChars;
 		}
 	}
 

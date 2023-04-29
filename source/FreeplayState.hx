@@ -1,7 +1,7 @@
 package;
 
-import flixel.util.FlxTimer;
 import WeekJson;
+import ChartingState;
 import flash.text.TextField;
 import flixel.FlxG;
 import flixel.FlxSprite;
@@ -83,11 +83,12 @@ class FreeplayState extends MusicBeatState
 				var colors:String = song[2];
 				if (colors == null || colors.length < 3)
 				{
-					colors = "#ffffff";
+					colors = "#FFFFFF";
 				}
 				addSong(song[0], i, song[1], FlxColor.fromString(colors));
 			}
 		}
+		WeekJson.loadTheFirstEnabledMod();
 
 		/*//KIND OF BROKEN NOW AND ALSO PRETTY USELESS//
 
@@ -101,6 +102,7 @@ class FreeplayState extends MusicBeatState
 		}*/
 
 		bg = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
+		bg.antialiasing = ClientPref.globalAntialiasing;
 		add(bg);
 		bg.screenCenter();
 
@@ -116,13 +118,6 @@ class FreeplayState extends MusicBeatState
 			// songText.x += 40;
 			// DONT PUT X IN THE FIRST PARAMETER OF new ALPHABET() !!
 			// songText.screenCenter(X);
-
-			/*var maxWidth = 200;
-			if (songText.width > maxWidth)
-			{
-				songText.scale = maxWidth / songText.width;
-			}
-			//songText.snapToPosition();*/
 
 			Paths.currentModDirectory = songs[i].folder;
 			var icon:HealthIcon = new HealthIcon(songs[i].songCharacter);
@@ -160,7 +155,7 @@ class FreeplayState extends MusicBeatState
 		{
 			lastDifficultyName = CoolUtil.defaultDifficulty;
 		}
-		curDifficulty = Math.round(Math.max(0, CoolUtil.difficultyArray.indexOf(lastDifficultyName)));
+		curDifficulty = Math.round(Math.max(0, CoolUtil.defaultDifficulties.indexOf(lastDifficultyName)));
 
 		changeSelection();
 		changeDiff();
@@ -229,28 +224,6 @@ class FreeplayState extends MusicBeatState
 
 	override function update(elapsed:Float)
 	{
-
-		if (FlxG.keys.pressed.SEVEN)
-			{
-				PlayState.storyPlaylist = ["Test"];
-				PlayState.isStoryMode = false;
-			
-				PlayState.SONG = Song.loadFromJson(PlayState.storyPlaylist[0].toLowerCase(), PlayState.storyPlaylist[0].toLowerCase());
-				PlayState.campaignScore = 0;
-				PlayState.campaignMisses = 0;
-				PlayState.storyWeek = 1;
-				PlayState.campaignScore = 0;
-				PlayState.campaignMisses = 0;
-			
-				PlayState.storyDifficulty = curDifficulty;
-				new FlxTimer().start(0.5, function(tmr:FlxTimer)
-				{
-					LoadingState.loadAndSwitchState(new PlayState());
-					FlxG.sound.music.volume = 0;
-					FreeplayState.destroyFreeplayVocals();
-				});
-			}
-			
 		if (FlxG.sound.music.volume < 0.7)
 		{
 			FlxG.sound.music.volume += 0.5 * FlxG.elapsed;
@@ -263,17 +236,6 @@ class FreeplayState extends MusicBeatState
 			lerpScore = intendedScore;
 		if (Math.abs(lerpRating - intendedRating) <= 0.01)
 			lerpRating = intendedRating;
-
-		/*var ratingSplit:Array<String> = Std.string(Highscore.floorDecimal(lerpRating * 100, 2)).split('.');
-		if (ratingSplit.length < 2)
-		{ // No decimals, add an empty space
-			ratingSplit.push('');
-		}
-
-		while (ratingSplit[1].length < 2)
-		{ // Less than 2 decimals in it, add decimals then
-			ratingSplit[1] += '0';
-		}*/
 
 		scoreText.text = 'PERSONAL BEST: ' + lerpScore;
 		positionHighscore();
@@ -339,6 +301,7 @@ class FreeplayState extends MusicBeatState
 			FlxG.sound.play(Paths.sound('cancelMenu'));
 			MusicBeatState.switchState(new MainMenuState());
 		}
+
 		if (space)
 		{
 			if (instPlaying != curSelected)
@@ -497,7 +460,7 @@ class FreeplayState extends MusicBeatState
 		Paths.currentModDirectory = songs[curSelected].folder;
 		PlayState.storyWeek = songs[curSelected].week;
 
-		CoolUtil.difficulties = CoolUtil.difficultyArray.copy();
+		CoolUtil.difficulties = CoolUtil.defaultDifficulties.copy();
 		var diffStr:String = WeekJson.getCurrentWeek().difficulties;
 		if (diffStr != null)
 			diffStr = diffStr.trim(); // Fuck you HTML5
@@ -525,7 +488,7 @@ class FreeplayState extends MusicBeatState
 
 		if (CoolUtil.difficulties.contains(CoolUtil.defaultDifficulty))
 		{
-			curDifficulty = Math.round(Math.max(0, CoolUtil.difficultyArray.indexOf(CoolUtil.defaultDifficulty)));
+			curDifficulty = Math.round(Math.max(0, CoolUtil.defaultDifficulties.indexOf(CoolUtil.defaultDifficulty)));
 		}
 		else
 		{

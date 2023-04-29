@@ -14,6 +14,11 @@ import haxe.io.Path;
 
 using StringTools;
 
+#if MODS_ALLOWED
+import sys.FileSystem;
+import sys.io.File;
+#end
+
 class Character extends FlxSprite
 {
 	public var animOffsets:Map<String, Array<Dynamic>>;
@@ -27,10 +32,14 @@ class Character extends FlxSprite
 	public var healthIcon:String = 'face';
 	public var holdTimer:Float = 0;
 	public var jsonScale:Float = 1;
+	public var specialAnim:Bool = false;
 
 	public var positionArray:Array<Float> = [0, 0];
 	public var camerapos:Array<Float> = [0, 0];
 	public var singDuration:Float = 4;
+	public var idleSuffix:String = '';
+	public var danceIdle:Bool = false; //Character use "danceLeft" and "danceRight" instead of "idle"
+	public var skipDance:Bool = false;
 
 	public var animationNotes:Array<Dynamic> = [];
 
@@ -39,13 +48,12 @@ class Character extends FlxSprite
 	public static var DEFAULT_CHARACTER:String = 'bf'; //In case a character is missing, it will use BF on its place
 
 	public var notesSkin:String = 'NOTE_assets';
-	public var image:String = '';
+	public var imageFile:String = '';
 	public var originalFlipX:Bool = false;
 	public var elAntialiasing:Bool = true;
 	public var animationsArray:Array<AnimArray> = [];
+	public var stunned:Bool = false;
 
-
-	public var animIdle:String;
 
 	public function new(x:Float, y:Float, ?character:String = "bf", ?isPlayer:Bool = false)
 	{
@@ -65,16 +73,29 @@ class Character extends FlxSprite
 			default:
 				//Debug.logInfo('Generating character (${curCharacter}) from JSON data...');
 				var characterPath:String = 'characters/' + curCharacter + '.json';
-				var spriteType = "sparrow";
 
+				#if MODS_ALLOWED
+				var path:String = Paths.modFolders(characterPath);
+				if (!FileSystem.exists(path))
+				{
+					path = Paths.getPreloadPath(characterPath);
+				}
+
+				if (!FileSystem.exists(path))
+				#else
 				var path:String = Paths.getPreloadPath(characterPath);
 				if (!Assets.exists(path))
+				#end
 				{
 					path = Paths.getPreloadPath('characters/' + DEFAULT_CHARACTER + '.json'); //If a character couldn't be found, change him to BF just to prevent a crash
 				}
-		
+
+				#if MODS_ALLOWED
+				var jsonData = File.getContent(path);
+				#else
 				// Load the data from JSON and cast it to a struct we can easily read.
 				var jsonData = Assets.getText(path);
+				#end
 				/*if (jsonData == null)
 				{
 					Debug.logError('Failed to parse JSON data for character ${curCharacter}');
@@ -82,8 +103,19 @@ class Character extends FlxSprite
 				}*/
 		
 				var data:CharacterFile = cast Json.parse(jsonData);
+				var spriteType = "sparrow";
 		
+				#if MODS_ALLOWED
+				var modTxtToFind:String = Paths.modsTxt(data.image);
+				var txtToFind:String = Paths.getPath('images/' + data.image + '.txt', TEXT);
+
+				// var modTextureToFind:String = Paths.modFolders("images/"+json.image);
+				// var textureToFind:String = Paths.getPath('images/' + json.image, new AssetType();
+
+				if (FileSystem.exists(modTxtToFind) || FileSystem.exists(txtToFind) || Assets.exists(txtToFind))
+				#else
 				if (Assets.exists(Paths.getPath('images/' + data.image + '.txt', TEXT)))
+				#end	
 				{
 					spriteType = "packer";
 				}
@@ -96,7 +128,7 @@ class Character extends FlxSprite
 					case "sparrow":
 						frames = Paths.getSparrowAtlas(data.image);
 				}
-				image = data.image;
+				imageFile = data.image;
 
 				antialiasing = data.antialiasing;
 		
@@ -147,28 +179,24 @@ class Character extends FlxSprite
 				healthIcon = data.healthicon;
 
 				healthdrain = data.health_drain;
-		
-				//playAnim(data.startingAnim);
 
-				animIdle = data.startingAnim;
-				playAnim(animIdle);
 
 				if (data.note_skin != null && data.note_skin.length > 0)
 				    notesSkin = data.note_skin;
 		}
 		originalFlipX = flipX;
 		elAntialiasing = antialiasing;
-		
 
+		recalculateDanceIdle();
 		dance();
-		animation.finish();
+		//animation.finish();
 
 		if (isPlayer)
 		{
 			flipX = !flipX;
 
 			// Doesn't flip for BF, since his are already in the right place???|
-			if (!curCharacter.startsWith('bf'))
+			/*if (!curCharacter.startsWith('bf'))
 			{
 				// var animArray
 				var oldRight = animation.getByName('singRIGHT').frames;
@@ -182,7 +210,15 @@ class Character extends FlxSprite
 					animation.getByName('singRIGHTmiss').frames = animation.getByName('singLEFTmiss').frames;
 					animation.getByName('singLEFTmiss').frames = oldMiss;
 				}
-			}
+			}*/
+		}
+
+		switch (curCharacter)
+		{
+			case 'pico-speaker':
+				skipDance = true;
+				loadMappedAnims();
+				playAnim("shoot1");
 		}
 	}
 
@@ -251,85 +287,53 @@ class Character extends FlxSprite
 				playAnim('idleHair');
 		}*/
 
-		switch (curCharacter)
-		{
-			case 'gf':
-				if (animation.curAnim.name == 'hairFall' && animation.curAnim.finished)
-					playAnim('danceRight');
-			case "pico-speaker":
-				// for pico??
-				if (animationNotes.length > 0)
-				{
-					if (Conductor.songPosition > animationNotes[0][0])
+			switch (curCharacter)
+			{
+				case 'pico-speaker':
+					if (animationNotes.length > 0 && Conductor.songPosition > animationNotes[0][0])
 					{
-						trace('played shoot anim' + animationNotes[0][1]);
+						var noteData:Int = 1;
+						if (animationNotes[0][1] > 2)
+							noteData = 3;
 
-						var shootAnim:Int = 1;
-
-						if (animationNotes[0][1] >= 2)
-							shootAnim = 3;
-
-						shootAnim += FlxG.random.int(0, 1);
-
-						playAnim('shoot' + shootAnim, true);
+						noteData += FlxG.random.int(0, 1);
+						playAnim('shoot' + noteData, true);
 						animationNotes.shift();
 					}
-				}
-
-				if (animation.curAnim.finished)
-				{
-					playAnim(animation.curAnim.name, false, false, animation.curAnim.numFrames - 3);
-				}
-		}
+					if (animation.curAnim.finished)
+						playAnim(animation.curAnim.name, false, false, animation.curAnim.frames.length - 3);
+			}
 
 		super.update(elapsed);
 	}
 
-	private var danced:Bool = false;
+	public var danced:Bool = false;
 
 	/**
 	 * FOR GF DANCING SHIT
 	 */
 	public function dance()
 	{
-		if (!debugMode)
+		if (!debugMode && !skipDance && !specialAnim)
 		{
-			switch (curCharacter)
+			if(danceIdle)
 			{
-				case 'gf' | 'gf-christmas' | 'gf-car' | 'gf-pixel' | 'gf-tankmen':
-					if (!animation.curAnim.name.startsWith('hair'))
-					{
-						danced = !danced;
+				danced = !danced;
 
-						if (danced)
-							playAnim('danceRight');
-						else
-							playAnim('danceLeft');
-					}
-
-				case 'pico-speaker':
-				// lol weed
-				// playAnim('shoot' + FlxG.random.int(1, 4), true);
-
-				case 'tankman':
-					if (!animation.curAnim.name.endsWith('DOWN-alt'))
-						playAnim('idle');
-
-				case 'spooky':
-					danced = !danced;
-
-					if (danced)
-						playAnim('danceRight');
-					else
-						playAnim('danceLeft');
-				default:
-					playAnim('idle');
+				if (danced)
+					playAnim('danceRight' + idleSuffix);
+				else
+					playAnim('danceLeft' + idleSuffix);
+			}
+			else if(animation.getByName('idle' + idleSuffix) != null) {
+					playAnim('idle' + idleSuffix);
 			}
 		}
 	}
 
 	public function playAnim(AnimName:String, Force:Bool = false, Reversed:Bool = false, Frame:Int = 0):Void
 	{
+		specialAnim = false;
 		animation.play(AnimName, Force, Reversed, Frame);
 
 		var daOffset = animOffsets.get(AnimName);
@@ -363,24 +367,18 @@ class Character extends FlxSprite
 		animOffsets[name] = [x, y];
 	}
 
-	/*public function addColorsNote(color0:Int, color1:Int, color2:Int, color3:Int)
-	{
-		if (!isPlayer)
-		{
-			Note.dadcolorsNote = [color0, color1, color2, color3];
-		}
-		else
-		{
-			Note.bfcolorsNote = [color0, color1, color2, color3];
-		}
-	}*/
-
-	public function addImageCharacter(name:String, library:String = 'shared') {
-		var tex = Paths.getSparrowAtlas(name, library);
-		frames = tex;
-		
+	public function recalculateDanceIdle() {
+		danceIdle = (animation.getByName('danceLeft' + idleSuffix) != null && animation.getByName('danceRight' + idleSuffix) != null);
 	}
 }
+
+
+
+
+
+
+
+
 
 typedef CharacterFile = {
 	var image:String;
@@ -391,7 +389,6 @@ typedef CharacterFile = {
 	
 	var healthbar_colors:String;
 	var note_colors:Array<String>;
-	var startingAnim:String;
 	var healthicon:String;
 	var antialiasing:Bool;
 	var note_skin:String;

@@ -6,7 +6,7 @@
     ],
     "weekCharacters": ["spooky", "bf", "gf"],
     "weekBefore": "Week1",
-    "storyName": "Spooky Mounth",
+	"storyName": "Spooky Month",
     "weekName": "Week2",
     "freeplayColor": "#FFFFFF",
     "startUnlocked": true,

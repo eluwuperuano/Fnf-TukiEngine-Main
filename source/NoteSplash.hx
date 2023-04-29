@@ -1,5 +1,7 @@
 package;
 
+import shaderslmfao.ColorRgb.ColoredNoteShader;
+import flixel.util.FlxColor;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import haxe.io.Path;

@@ -94,4 +94,8 @@ class MusicBeatState extends FlxUIState
 		FlxTransitionableState.skipNextTransIn = false;
 		FlxG.switchState(nextState);
 	}
+
+	public static function resetState() {
+		MusicBeatState.switchState(FlxG.state);
+	}
 }

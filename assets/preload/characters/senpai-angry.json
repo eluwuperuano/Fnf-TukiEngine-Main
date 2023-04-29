@@ -1,1 +1,82 @@
-{"animations":[{"offsets":[0,0],"loop":false,"fps":24,"anim":"idle","indices":[],"name":"Angry Senpai Idle"},{"offsets":[5,37],"loop":false,"fps":24,"anim":"singUP","indices":[],"name":"Angry Senpai UP NOTE"},{"offsets":[40,0],"loop":false,"fps":24,"anim":"singLEFT","indices":[],"name":"Angry Senpai LEFT NOTE"},{"offsets":[0,0],"loop":false,"fps":24,"anim":"singRIGHT","indices":[],"name":"Angry Senpai RIGHT NOTE"},{"offsets":[14,0],"loop":false,"fps":24,"anim":"singDOWN","indices":[],"name":"Angry Senpai DOWN NOTE"}],"note_skin":"NOTE_assets","image":"characters/senpai","charpos":[150,360],"health_drain":false,"healthicon":"senpai","note_colors":["#ffaa6f","#ffaa6f","#ffaa6f","#ffaa6f"],"startingAnim":"idle","camerapos":[-250,-380],"flip_x":false,"healthbar_colors":"#ffaa6f","antialiasing":false,"sing":4,"scale":6}
+{
+    "animations": [
+        {
+            "offsets": [
+                0,
+                0
+            ],
+            "loop": false,
+            "fps": 24,
+            "anim": "idle",
+            "indices": [],
+            "name": "Angry Senpai Idle"
+        },
+        {
+            "offsets": [
+                5,
+                37
+            ],
+            "loop": false,
+            "fps": 24,
+            "anim": "singUP",
+            "indices": [],
+            "name": "Angry Senpai UP NOTE"
+        },
+        {
+            "offsets": [
+                40,
+                0
+            ],
+            "loop": false,
+            "fps": 24,
+            "anim": "singLEFT",
+            "indices": [],
+            "name": "Angry Senpai LEFT NOTE"
+        },
+        {
+            "offsets": [
+                0,
+                0
+            ],
+            "loop": false,
+            "fps": 24,
+            "anim": "singRIGHT",
+            "indices": [],
+            "name": "Angry Senpai RIGHT NOTE"
+        },
+        {
+            "offsets": [
+                14,
+                0
+            ],
+            "loop": false,
+            "fps": 24,
+            "anim": "singDOWN",
+            "indices": [],
+            "name": "Angry Senpai DOWN NOTE"
+        }
+    ],
+    "note_skin": "NOTE_assets",
+    "image": "characters/senpai",
+    "charpos": [
+        150,
+        360
+    ],
+    "health_drain": false,
+    "healthicon": "senpai",
+    "note_colors": [
+        "#ffaa6f",
+        "#ffaa6f",
+        "#ffaa6f",
+        "#ffaa6f"
+    ],
+    "camerapos": [
+        -250,
+        -380
+    ],
+    "flip_x": false,
+    "healthbar_colors": "#ffaa6f",
+    "antialiasing": false,
+    "sing": 4,
+    "scale": 6
+}

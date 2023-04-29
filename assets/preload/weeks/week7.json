@@ -6,7 +6,7 @@
     ],
     "weekCharacters": ["tankman", "bf", "gf"],
     "weekBefore": "Week6",
-    "storyName": "TANKMEN",
+	"storyName": "TANKMAN",
     "weekName": "Week7",
     "freeplayColor": "#f6b604",
     "startUnlocked": true,

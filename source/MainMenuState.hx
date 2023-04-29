@@ -1,5 +1,7 @@
 package;
 
+import openfl.utils.Assets;
+import haxe.Json;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
@@ -20,12 +22,14 @@ class MainMenuState extends MusicBeatState
 {
 	var curSelected:Int = 0;
 
+	var tukiengineVer = "V 2 . 0";
+
 	var menuItems:FlxTypedGroup<FlxSprite>;
 
 	#if !switch
 	var optionShit:Array<String> = ['story mode', 'freeplay', 'options', 'credits'];
 	#else
-	var optionShit:Array<String> = ['story mode', 'freeplay', 'options', 'credits'];
+	var optionShit:Array<String> = ['story mode', 'freeplay', 'options', 'credits', 'music'];
 	#end
 
 	var magenta:FlxSprite;
@@ -33,6 +37,8 @@ class MainMenuState extends MusicBeatState
 
 	override function create()
 	{
+		var data:MenuItens = cast Json.parse(Assets.getText(Paths.getPreloadPath('data/menuConfig.json')));
+
 		if (!FlxG.sound.music.playing)
 		{
 			FlxG.sound.playMusic('assets/music/freakyMenu' + TitleState.soundExt);
@@ -40,7 +46,7 @@ class MainMenuState extends MusicBeatState
 
 		persistentUpdate = persistentDraw = true;
 
-		var bg:FlxSprite = new FlxSprite(-80).loadGraphic('assets/images/menuBG.png');
+		var bg:FlxSprite = new FlxSprite(-80).loadGraphic(Paths.image(data.menu));
 		bg.scrollFactor.x = 0;
 		bg.scrollFactor.y = 0.18;
 		bg.setGraphicSize(Std.int(bg.width * 1.1));
@@ -52,7 +58,7 @@ class MainMenuState extends MusicBeatState
 		camFollow = new FlxObject(0, 0, 1, 1);
 		add(camFollow);
 
-		magenta = new FlxSprite(-80).loadGraphic('assets/images/menuDesat.png');
+		magenta = new FlxSprite(-80).loadGraphic(Paths.image(data.menuDesat));
 		magenta.scrollFactor.x = 0;
 		magenta.scrollFactor.y = 0.18;
 		magenta.setGraphicSize(Std.int(magenta.width * 1.1));
@@ -60,19 +66,17 @@ class MainMenuState extends MusicBeatState
 		magenta.screenCenter();
 		magenta.visible = false;
 		magenta.antialiasing = true;
-		magenta.color = 0xFFfd719b;
+		magenta.color = FlxColor.fromString(data.desatColor);
 		add(magenta);
 		// magenta.scrollFactor.set();
 
 		menuItems = new FlxTypedGroup<FlxSprite>();
 		add(menuItems);
 
-		var tex = FlxAtlasFrames.fromSparrow('assets/images/FNF_main_menu_assets.png', 'assets/images/FNF_main_menu_assets.xml');
-
 		for (i in 0...optionShit.length)
 		{
 			var menuItem:FlxSprite = new FlxSprite(0, 60 + (i * 160));
-			menuItem.frames = tex;
+			menuItem.frames = Paths.getSparrowAtlas('menuState/' + optionShit[i]);
 			menuItem.animation.addByPrefix('idle', optionShit[i] + " basic", 24);
 			menuItem.animation.addByPrefix('selected', optionShit[i] + " white", 24);
 			menuItem.animation.play('idle');
@@ -85,7 +89,12 @@ class MainMenuState extends MusicBeatState
 
 		FlxG.camera.follow(camFollow, null, 0.06);
 
-		var versionShit:FlxText = new FlxText(5, FlxG.height - 18, 0, "v" + Application.current.meta.get('version'), 12);
+		var versionShit:FlxText = new FlxText(5, FlxG.height - 38, 0, "Tuki Engine" + tukiengineVer, 12);
+		versionShit.scrollFactor.set();
+		versionShit.setFormat(Paths.font('fnf.ttf'), 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		add(versionShit);
+
+		var versionShit:FlxText = new FlxText(5, FlxG.height - 18, 0, "Friday Night Funkin v" + Application.current.meta.get('version'), 12);
 		versionShit.scrollFactor.set();
 		versionShit.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		add(versionShit);
@@ -164,19 +173,19 @@ class MainMenuState extends MusicBeatState
 								{
 									case 'story mode':
 										FlxG.switchState(new StoryMenuState());
-										trace("Story Menu Selected");
+										//trace("Story Menu Selected");
 									case 'freeplay':
 										FlxG.switchState(new FreeplayState());
 
-										trace("Freeplay Menu Selected");
+										//trace("Freeplay Menu Selected");
 
 									case 'options':
 										FlxG.switchState(new OptionsState());
-										trace("Options Menu Selected");
+										//trace("Options Menu Selected");
 
 									case 'credits':
 										FlxG.switchState(new CreditsState());
-										trace("Credits Menu Selected");
+										//trace("Credits Menu Selected");
 								}
 							});
 						}
@@ -191,6 +200,16 @@ class MainMenuState extends MusicBeatState
 		{
 			spr.screenCenter(X);
 		});
+
+		if (FlxG.keys.justPressed.SEVEN)
+			{
+				LoadingState.loadAndSwitchState(new ChartingState(), false);
+			}
+
+		if (FlxG.keys.justPressed.EIGHT)
+			{
+				LoadingState.loadAndSwitchState(new CharacterEditorState(Character.DEFAULT_CHARACTER, false));
+			}
 	}
 
 	function changeItem(huh:Int = 0)
@@ -215,4 +234,10 @@ class MainMenuState extends MusicBeatState
 			spr.updateHitbox();
 		});
 	}
+}
+
+typedef MenuItens = {
+	var menu:String;
+	var menuDesat:String;
+	var desatColor:String;
 }

@@ -5,9 +5,9 @@ import flixel.FlxSprite;
 
 class StrumsNote extends FlxSprite
 {
-    var leNote:String = Note.curNoteSkin;
     var elStage:String = PlayState.curStage;
     var noteData:Int = 0;
+    public var mustPress:Bool = false;
 	
 	private var player:Int;
 	
@@ -35,81 +35,72 @@ class StrumsNote extends FlxSprite
 
     public function reloadNote() {
 
-        switch (elStage)
-        {
-            case 'school' | 'schoolEvil':
-                leNote = 'pixel';
-            default:
-                leNote = 'normal';
-        }
 		var lastAnim:String = null;
 		if(animation.curAnim != null) lastAnim = animation.curAnim.name;
 
-        switch (leNote)
+        if (PlayState.pixeledStage)
         {
-            case 'pixel':
-                loadGraphic(Paths.image('pixelUI/' + texture));
-                width = width / 4;
-                height = height / 5;
-                loadGraphic(Paths.image('pixelUI/' + texture), true, Math.floor(width), Math.floor(height));
-    
-                antialiasing = false;
-                setGraphicSize(Std.int(width * PlayState.daPixelZoom));
-    
-                animation.add('green', [6]);
-                animation.add('red', [7]);
-                animation.add('blue', [5]);
-                animation.add('purple', [4]);
-                switch (Math.abs(noteData) % 4)
-                {
-                    case 0:
-                        animation.add('static', [0]);
-                        animation.add('pressed', [4, 8], 12, false);
-                        animation.add('confirm', [12, 16], 24, false);
-                    case 1:
-                        animation.add('static', [1]);
-                        animation.add('pressed', [5, 9], 12, false);
-                        animation.add('confirm', [13, 17], 24, false);
-                    case 2:
-                        animation.add('static', [2]);
-                        animation.add('pressed', [6, 10], 12, false);
-                        animation.add('confirm', [14, 18], 12, false);
-                    case 3:
-                        animation.add('static', [3]);
-                        animation.add('pressed', [7, 11], 12, false);
-                        animation.add('confirm', [15, 19], 24, false);
-                }
+            loadGraphic(Paths.image('pixelUI/' + texture));
+            width = width / 4;
+            height = height / 5;
+            loadGraphic(Paths.image('pixelUI/' + texture), true, Math.floor(width), Math.floor(height));
 
-            case 'normal':
-                frames = Paths.getSparrowAtlas(texture);
-                animation.addByPrefix('green', 'arrowUP');
-                animation.addByPrefix('blue', 'arrowDOWN');
-                animation.addByPrefix('purple', 'arrowLEFT');
-                animation.addByPrefix('red', 'arrowRIGHT');
-    
-                antialiasing = true;
-                setGraphicSize(Std.int(width * 0.7));
-    
-                switch (Math.abs(noteData) % 4)
-                {
-                    case 0:
-                        animation.addByPrefix('static', 'arrowLEFT');
-                        animation.addByPrefix('pressed', 'left press', 24, false);
-                        animation.addByPrefix('confirm', 'left confirm', 24, false);
-                    case 1:
-                        animation.addByPrefix('static', 'arrowDOWN');
-                        animation.addByPrefix('pressed', 'down press', 24, false);
-                        animation.addByPrefix('confirm', 'down confirm', 24, false);
-                    case 2:
-                        animation.addByPrefix('static', 'arrowUP');
-                        animation.addByPrefix('pressed', 'up press', 24, false);
-                        animation.addByPrefix('confirm', 'up confirm', 24, false);
-                    case 3:
-                        animation.addByPrefix('static', 'arrowRIGHT');
-                        animation.addByPrefix('pressed', 'right press', 24, false);
-                        animation.addByPrefix('confirm', 'right confirm', 24, false);
-                }
-        }
+            antialiasing = false;
+            setGraphicSize(Std.int(width * PlayState.daPixelZoom));
+
+            animation.add('green', [6]);
+            animation.add('red', [7]);
+            animation.add('blue', [5]);
+            animation.add('purple', [4]);
+            switch (Math.abs(noteData) % 4)
+            {
+                case 0:
+                    animation.add('static', [0]);
+                    animation.add('pressed', [4, 8], 12, false);
+                    animation.add('confirm', [12, 16], 24, false);
+                case 1:
+                    animation.add('static', [1]);
+                    animation.add('pressed', [5, 9], 12, false);
+                    animation.add('confirm', [13, 17], 24, false);
+                case 2:
+                    animation.add('static', [2]);
+                    animation.add('pressed', [6, 10], 12, false);
+                    animation.add('confirm', [14, 18], 12, false);
+                case 3:
+                    animation.add('static', [3]);
+                    animation.add('pressed', [7, 11], 12, false);
+                    animation.add('confirm', [15, 19], 24, false);
+            }
+        }else{
+            frames = Paths.getSparrowAtlas(texture);
+            animation.addByPrefix('green', 'arrowUP');
+            animation.addByPrefix('blue', 'arrowDOWN');
+            animation.addByPrefix('purple', 'arrowLEFT');
+            animation.addByPrefix('red', 'arrowRIGHT');
+
+            antialiasing = true;
+            setGraphicSize(Std.int(width * 0.7));
+
+            switch (Math.abs(noteData) % 4)
+            {
+                case 0:
+                    animation.addByPrefix('static', 'arrowLEFT');
+                    animation.addByPrefix('pressed', 'left press', 24, false);
+                    animation.addByPrefix('confirm', 'left confirm', 24, false);
+                case 1:
+                    animation.addByPrefix('static', 'arrowDOWN');
+                    animation.addByPrefix('pressed', 'down press', 24, false);
+                    animation.addByPrefix('confirm', 'down confirm', 24, false);
+                case 2:
+                    animation.addByPrefix('static', 'arrowUP');
+                    animation.addByPrefix('pressed', 'up press', 24, false);
+                    animation.addByPrefix('confirm', 'up confirm', 24, false);
+                case 3:
+                    animation.addByPrefix('static', 'arrowRIGHT');
+                    animation.addByPrefix('pressed', 'right press', 24, false);
+                    animation.addByPrefix('confirm', 'right confirm', 24, false);
+            }
+        } 
 		updateHitbox();
 
 		if(lastAnim != null)
@@ -123,7 +114,7 @@ class StrumsNote extends FlxSprite
 		centerOffsets();
 		centerOrigin();
 
-		if(animation.curAnim.name == 'confirm' && leNote != "pixel") {
+		if(animation.curAnim.name == 'confirm' && !PlayState.pixeledStage) {
 			centerOrigin();
 		}
 	}

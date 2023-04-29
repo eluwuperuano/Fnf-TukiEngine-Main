@@ -45,7 +45,6 @@
     }],
     "healthbar_colors": "#d8558e",
     "note_colors": ["#d8558e", "#d8558e", "#d8558e", "#d8558e"],
-    "startingAnim": "idle",
     "healthicon": "mom",
     "antialiasing": true,
     "camerapos": [0, 0],

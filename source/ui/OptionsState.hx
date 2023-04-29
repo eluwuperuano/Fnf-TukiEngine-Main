@@ -1,5 +1,6 @@
 package ui;
 
+import ui.AtlasText.Case;
 import Controls.Control;
 import flash.text.TextField;
 import flixel.FlxG;

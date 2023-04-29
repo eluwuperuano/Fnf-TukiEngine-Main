@@ -1,5 +1,7 @@
 package;
 
+import shaderslmfao.ColorRgb.ColoredNoteShader;
+import haxe.io.Path;
 import flixel.util.FlxCollision;
 import flixel.FlxG;
 import flixel.FlxObject;
@@ -31,6 +33,10 @@ import flixel.system.debug.interaction.tools.Pointer.GraphicCursorCross;
 
 using StringTools;
 
+#if MODS_ALLOWED
+import sys.FileSystem;
+#end
+
 /**
 	*DEBUG MODE
  */
@@ -44,12 +50,14 @@ class CharacterEditorState extends MusicBeatState
 	//var animList:Array<String> = [];
 	var curAnim:Int = 0;
 	var daAnim:String = 'spooky';
+	var goToPlayState:Bool = true;
 	var camFollow:FlxObject;
 
-	public function new(daAnim:String = 'spooky')
+	public function new(daAnim:String = 'spooky', goToPlayState:Bool = true)
 	{
 		super();
-		this.daAnim = PlayState.SONG.player2;
+		this.daAnim = daAnim;
+		this.goToPlayState = goToPlayState;
 	}
 
 	var UI_box:FlxUITabMenu;
@@ -67,7 +75,8 @@ class CharacterEditorState extends MusicBeatState
 
 	override function create()
 	{
-		FlxG.sound.music.stop();
+		FlxG.sound.playMusic(Paths.music('breakfast'), 0.5);
+		///FlxG.sound.music.stop();
 
 		camEditor = new FlxCamera();
 		camHUD = new FlxCamera();
@@ -100,6 +109,7 @@ class CharacterEditorState extends MusicBeatState
 
 		leHealthIcon = new HealthIcon(char.healthIcon, false);
 		add(leHealthIcon);
+		leHealthIcon.cameras = [camHUD];
 		leHealthIcon.y = FlxG.height - 150;
 		dumbTexts = new FlxTypedGroup<FlxText>();
 		add(dumbTexts);
@@ -152,7 +162,8 @@ class CharacterEditorState extends MusicBeatState
 		var tabs = [
 			{name: 'Character', label: 'Character'},
 			{name: 'Animations', label: 'Animations'},
-			{name: 'CustomisedNotes', label: 'CustomisedNotes'},
+			{name: 'DumbFunctions', label: 'DumbFunctions'},
+			{name: 'CustomisedNotes', label: 'CustomisedNotes'}
 		];
 		UI_characterbox = new FlxUITabMenu(null, tabs, true);
 		UI_characterbox.cameras = [camHUD];
@@ -171,6 +182,7 @@ class CharacterEditorState extends MusicBeatState
 		addCharacterUI();
 		addAnimationsUI();
 		addCustomisedNotesUI();
+		addDumbFunctions();
 		UI_characterbox.selected_tab_id = 'Character';
 
 		FlxG.mouse.visible = true;
@@ -187,6 +199,8 @@ class CharacterEditorState extends MusicBeatState
 	var arrow1:FlxSprite;
 	var arrow2:FlxSprite;
 	var arrow3:FlxSprite;
+
+	var textureNote:FlxUIInputText;
 
 	var colorButtomChange:FlxButton;
 
@@ -231,21 +245,36 @@ class CharacterEditorState extends MusicBeatState
 				
 				arrowtext3 = new FlxUIInputText(arrow3.x, arrow0.y + 135, 75, char.notesColor[3], 8);
 
-				arrow0.color = FlxColor.fromString(arrowtext0.text);
-				arrow1.color = FlxColor.fromString(arrowtext1.text);
-				arrow2.color = FlxColor.fromString(arrowtext2.text);
-				arrow3.color = FlxColor.fromString(arrowtext3.text);
+				var  color0 = new FlxColor(FlxColor.fromString(arrowtext0.text));
+				var  color1 = new FlxColor(FlxColor.fromString(arrowtext1.text));
+				var  color2 = new FlxColor(FlxColor.fromString(arrowtext2.text));
+				var  color3 = new FlxColor(FlxColor.fromString(arrowtext3.text));
+
+				arrow0.shader = new ColoredNoteShader(color0.red, color0.green, color0.blue);
+				arrow1.shader = new ColoredNoteShader(color1.red, color1.green, color1.blue);
+				arrow2.shader = new ColoredNoteShader(color2.red, color2.green, color2.blue);
+				arrow3.shader = new ColoredNoteShader(color3.red, color3.green, color3.blue);
 
 
 				colorButtomChange = new FlxButton(arrowtext3.x + 50, arrowtext3.y + 35, 'Change Color', function() {
-					/*char.notesColor[0] = arrowtext0.text;
-					char.notesColor[1] = arrowtext1.text;
-					char.notesColor[2] = arrowtext2.text;
-					char.notesColor[3] = arrowtext3.text;*/
-					arrow0.color = FlxColor.fromString(arrowtext0.text);
-					arrow1.color = FlxColor.fromString(arrowtext1.text);
-					arrow2.color = FlxColor.fromString(arrowtext2.text);
-					arrow3.color = FlxColor.fromString(arrowtext3.text);
+
+					var  color0 = new FlxColor(FlxColor.fromString(arrowtext0.text));
+					var  color1 = new FlxColor(FlxColor.fromString(arrowtext1.text));
+					var  color2 = new FlxColor(FlxColor.fromString(arrowtext2.text));
+					var  color3 = new FlxColor(FlxColor.fromString(arrowtext3.text));
+	
+					arrow0.shader = new ColoredNoteShader(color0.red, color0.green, color0.blue);
+					arrow1.shader = new ColoredNoteShader(color1.red, color1.green, color1.blue);
+					arrow2.shader = new ColoredNoteShader(color2.red, color2.green, color2.blue);
+					arrow3.shader = new ColoredNoteShader(color3.red, color3.green, color3.blue);
+				});
+
+				textureNote = new FlxUIInputText(arrowtext0.x, colorButtomChange.y, 80, char.notesSkin, 8, 0xFFFFFFFF, 0xFF000000);
+				textureNote.font = Paths.font("fnf.ttf");
+
+				var changeTexture:FlxButton = new FlxButton(textureNote.x, textureNote.y + 80, "Reload Skin", function() {
+					char.notesSkin = textureNote.text;
+					reloadNotesImage();
 				});
 
 
@@ -258,6 +287,8 @@ class CharacterEditorState extends MusicBeatState
 		tab_group.add(arrowtext2);
 		tab_group.add(arrowtext3);
 		tab_group.add(colorButtomChange);
+		tab_group.add(textureNote);
+		tab_group.add(changeTexture);
 		UI_characterbox.addGroup(tab_group);	
 	}
 
@@ -319,65 +350,6 @@ class CharacterEditorState extends MusicBeatState
 			changeBGbutton.text = "Pixel BG";
 		}
 	}
-
-	/*var animationInputText:FlxUIInputText;
-	function addOffsetsUI() {
-		var tab_group = new FlxUI(null, UI_box);
-		tab_group.name = "Offsets";
-
-		animationInputText = new FlxUIInputText(15, 30, 100, 'idle', 8);
-		
-		var addButton:FlxButton = new FlxButton(animationInputText.x + animationInputText.width + 23, animationInputText.y - 2, "Add", function()
-		{
-			var theText:String = animationInputText.text;
-			if(theText != '') {
-				var alreadyExists:Bool = false;
-				for (i in 0...animList.length) {
-					if(animList[i] == theText) {
-						alreadyExists = true;
-						break;
-					}
-				}
-
-				if(!alreadyExists) {
-					char.animOffsets.set(theText, [0, 0]);
-					animList.push(theText);
-				}
-			}
-		});
-			
-		var removeButton:FlxButton = new FlxButton(animationInputText.x + animationInputText.width + 23, animationInputText.y + 20, "Remove", function()
-		{
-			var theText:String = animationInputText.text;
-			if(theText != '') {
-				for (i in 0...animList.length) {
-					if(animList[i] == theText) {
-						if(char.animOffsets.exists(theText)) {
-							char.animOffsets.remove(theText);
-						}
-
-						animList.remove(theText);
-						if(char.animation.curAnim.name == theText && animList.length > 0) {
-							char.playAnim(animList[0], true);
-						}
-						break;
-					}
-				}
-			}
-		});
-			
-		var saveButton:FlxButton = new FlxButton(animationInputText.x, animationInputText.y + 35, "Save Offsets", function()
-		{
-			saveOffsets();
-		});
-
-		tab_group.add(new FlxText(10, animationInputText.y - 18, 0, 'Add/Remove Animation:'));
-		tab_group.add(addButton);
-		tab_group.add(removeButton);
-		tab_group.add(saveButton);
-		tab_group.add(animationInputText);
-		UI_box.addGroup(tab_group);
-	}*/
 
 	var charDropDown:FlxUIDropDownMenuCustom;
 	function addSettingsUI() {
@@ -445,7 +417,7 @@ class CharacterEditorState extends MusicBeatState
 		imageInputText = new FlxUIInputText(15, 30, 200, 'characters/BOYFRIEND', 8);
 		var reloadImage:FlxButton = new FlxButton(imageInputText.x + 210, imageInputText.y - 3, "Reload Image", function()
 		{
-			char.image = imageInputText.text;
+			char.imageFile = imageInputText.text;
 			reloadCharacterImage();
 			if(char.animation.curAnim != null) {
 				char.playAnim(char.animation.curAnim.name, true);
@@ -645,6 +617,22 @@ class CharacterEditorState extends MusicBeatState
 		UI_characterbox.addGroup(tab_group);
 	}
 
+	var healthDrainBox:FlxUICheckBox;
+
+	function addDumbFunctions() {
+		var tab_group = new FlxUI(null, UI_box);
+		tab_group.name = "DumbFunctions";
+		
+		healthDrainBox = new FlxUICheckBox(20, 20, null, null, 'health Drain', 100);
+		healthDrainBox.checked = char.healthdrain;
+		healthDrainBox.callback = function () {
+			char.healthdrain = healthDrainBox.checked;
+		}
+
+		tab_group.add(healthDrainBox);
+		UI_characterbox.addGroup(tab_group);
+	}
+
 	override function getEvent(id:String, sender:Dynamic, data:Dynamic, ?params:Array<Dynamic>) {
 		if(id == FlxUIInputText.CHANGE_EVENT && (sender is FlxUIInputText)) {
 			if(sender == healthIconInputText) {
@@ -653,7 +641,7 @@ class CharacterEditorState extends MusicBeatState
 				updatePresence();
 			}
 			else if(sender == imageInputText) {
-				char.image = imageInputText.text;
+				char.imageFile = imageInputText.text;
 			}
 			else if(sender == arrowtext0)
 			{
@@ -721,10 +709,10 @@ class CharacterEditorState extends MusicBeatState
 		}
 
 		var anims:Array<AnimArray> = char.animationsArray.copy();
-		if(Paths.fileExists('images/' + char.image + '.txt', TEXT)) {
-			char.frames = Paths.getPackerAtlas(char.image);
+		if(Paths.fileExists('images/' + char.imageFile + '.txt', TEXT)) {
+			char.frames = Paths.getPackerAtlas(char.imageFile);
 		} else {
-			char.frames = Paths.getSparrowAtlas(char.image);
+			char.frames = Paths.getSparrowAtlas(char.imageFile);
 		}
 
 		if(char.animationsArray != null && char.animationsArray.length > 0) {
@@ -749,6 +737,24 @@ class CharacterEditorState extends MusicBeatState
 		} else {
 			char.dance();
 		}
+	}
+
+	function reloadNotesImage() {
+		arrow0.frames = Paths.getSparrowAtlas(char.notesSkin);
+		arrow0.animation.addByPrefix('static0', 'purple0');
+		arrow0.animation.play('static0', false);
+
+		arrow1.frames = Paths.getSparrowAtlas(char.notesSkin);
+		arrow1.animation.addByPrefix('static1', 'blue0');
+		arrow1.animation.play('static1', false);
+		
+		arrow2.frames = Paths.getSparrowAtlas(char.notesSkin);
+		arrow2.animation.addByPrefix('static2', 'green0');
+		arrow2.animation.play('static2', false);
+		
+		arrow3.frames = Paths.getSparrowAtlas(char.notesSkin);
+		arrow3.animation.addByPrefix('static3', 'red0');
+		arrow3.animation.play('static3', false);
 	}
 
 	function genBoyOffsets():Void
@@ -829,7 +835,7 @@ class CharacterEditorState extends MusicBeatState
 
 	function reloadCharacterOptions() {
 		if(UI_characterbox != null) {
-			imageInputText.text = char.image;
+			imageInputText.text = char.imageFile;
 			healthIconInputText.text = char.healthIcon;
 			singDurationStepper.value = char.singDuration;
 			scaleStepper.value = char.jsonScale;
@@ -845,14 +851,30 @@ class CharacterEditorState extends MusicBeatState
 			arrowtext1.text = char.notesColor[1];
 			arrowtext2.text = char.notesColor[2];
 			arrowtext3.text = char.notesColor[3];
-			arrow0.color = FlxColor.fromString(arrowtext0.text);
-			arrow1.color = FlxColor.fromString(arrowtext1.text);
-			arrow2.color = FlxColor.fromString(arrowtext2.text);
-			arrow3.color = FlxColor.fromString(arrowtext3.text);
+
+			var  color0 = new FlxColor(FlxColor.fromString(arrowtext0.text));
+			var  color1 = new FlxColor(FlxColor.fromString(arrowtext1.text));
+			var  color2 = new FlxColor(FlxColor.fromString(arrowtext2.text));
+			var  color3 = new FlxColor(FlxColor.fromString(arrowtext3.text));
+
+			arrow0.shader = new ColoredNoteShader(color0.red, color0.green, color0.blue);
+			arrow1.shader = new ColoredNoteShader(color1.red, color1.green, color1.blue);
+			arrow2.shader = new ColoredNoteShader(color2.red, color2.green, color2.blue);
+			arrow3.shader = new ColoredNoteShader(color3.red, color3.green, color3.blue);
 
 			cubo.color = FlxColor.fromString(char.barColor);
 			barColorInputText.text = char.barColor;
 
+			textureNote.text = char.notesSkin;
+
+			healthDrainBox.checked = char.healthdrain;
+
+			/*arrow0.frames = Paths.getSparrowAtlas(char.notesSkin);
+			arrow1.frames = Paths.getSparrowAtlas(char.notesSkin);
+			arrow1.frames = Paths.getSparrowAtlas(char.notesSkin);
+			arrow1.frames = Paths.getSparrowAtlas(char.notesSkin);*/
+
+			reloadNotesImage();
 			reloadAnimationDropDown();
 			updatePresence();
 		}
@@ -870,7 +892,39 @@ class CharacterEditorState extends MusicBeatState
 
 	function reloadCharacterDropDown() {
 		var charsLoaded:Map<String, Bool> = new Map();
+
+		#if MODS_ALLOWED
+		characterList = [];
+		var directories:Array<String> = [
+			Paths.mods('characters/'),
+			Paths.mods(Paths.currentModDirectory + '/characters/'),
+			Paths.getPreloadPath('characters/')
+		];
+		for (mod in Paths.getGlobalMods())
+			directories.push(Paths.mods(mod + '/characters/'));
+		for (i in 0...directories.length)
+		{
+			var directory:String = directories[i];
+			if (FileSystem.exists(directory))
+			{
+				for (file in FileSystem.readDirectory(directory))
+				{
+					var path = haxe.io.Path.join([directory, file]);
+					if (!sys.FileSystem.isDirectory(path) && file.endsWith('.json'))
+					{
+						var charToCheck:String = file.substr(0, file.length - 5);
+						if (!charsLoaded.exists(charToCheck))
+						{
+							characterList.push(charToCheck);
+							charsLoaded.set(charToCheck, true);
+						}
+					}
+				}
+			}
+		}
+		#else
 		characterList = CoolUtil.coolTextFile(Paths.txt('characterList'));
+		#end
 
 		charDropDown.setData(FlxUIDropDownMenuCustom.makeStrIdLabelArray(characterList, true));
 		charDropDown.selectedLabel = daAnim;
@@ -904,16 +958,12 @@ class CharacterEditorState extends MusicBeatState
 
 		if(!charDropDown.dropPanel.visible) {
 			if (FlxG.keys.justPressed.ESCAPE) {
-				var songName:String = PlayState.SONG.song.toLowerCase();
-				/*for (week in 0...WeekData.songsNames.length) {
-					var weekSongs:Array<String> = WeekData.songsNames[week];
-					for (i in 0...weekSongs.length) {
-						if(weekSongs[i].toLowerCase() == songName) {
-							PlayState.storyWeek = week;
-						}
-					}
-				}*/
-				LoadingState.loadAndSwitchState(new PlayState());
+				if(goToPlayState) {
+					MusicBeatState.switchState(new PlayState());
+				} else {
+					MusicBeatState.switchState(new MainMenuState());
+					FlxG.sound.playMusic(Paths.music('freakyMenu'));
+				}
 				FlxG.mouse.visible = false;
 				return;
 			}
@@ -997,7 +1047,7 @@ class CharacterEditorState extends MusicBeatState
 				}
 			}
 		}
-		camHUD.zoom = FlxG.camera.zoom;
+		camEditor.zoom = FlxG.camera.zoom;
 		super.update(elapsed);
 	}
 
@@ -1053,7 +1103,7 @@ class CharacterEditorState extends MusicBeatState
 
 	function saveCharacter() {
 		var json = {
-			"image": char.image,
+			"image": char.imageFile,
 			"scale": char.jsonScale,
 			"flip_x": char.originalFlipX,
 
@@ -1061,7 +1111,6 @@ class CharacterEditorState extends MusicBeatState
 
 			"healthbar_colors": char.barColor,
 			"note_colors": char.notesColor,
-			"startingAnim": char.animIdle,
 			"healthicon": char.healthIcon,
 			"antialiasing": char.elAntialiasing,
 			"note_skin": char.notesSkin,

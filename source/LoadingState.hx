@@ -21,17 +21,19 @@ class LoadingState extends MusicBeatState
 	var target:FlxState;
 	var stopMusic = false;
 	var callbacks:MultiCallback;
+	var directory:String;
 
 	var danceLeft = false;
 
 	var loadBar:FlxSprite;
 	var funkay:FlxSprite;
 
-	function new(target:FlxState, stopMusic:Bool)
+	function new(target:FlxState, stopMusic:Bool, directory:String)
 	{
 		super();
 		this.target = target;
 		this.stopMusic = stopMusic;
+		this.directory = directory;
 	}
 
 	override function create()
@@ -51,24 +53,28 @@ class LoadingState extends MusicBeatState
 		loadBar = new FlxSprite(0, FlxG.height - 20).makeGraphic(FlxG.width, 10, 0xFFff16d2);
 		loadBar.screenCenter(X);
 		add(loadBar);
+		
+		initSongsManifest().onComplete
+		(
+			function (lib)
+			{
+				callbacks = new MultiCallback(onLoad);
+				var introComplete = callbacks.add("introComplete");
+				if (PlayState.SONG != null) {
+					checkLoadSong(getSongPath());
+					if (PlayState.SONG.needsVoices)
+						checkLoadSong(getVocalPath());
+				}
+				checkLibrary("shared");
+				if(directory != null && directory.length > 0 && directory != 'shared') {
+					checkLibrary(directory);
+				}
 
-		initSongsManifest().onComplete(function(lib)
-		{
-			callbacks = new MultiCallback(onLoad);
-			var introComplete = callbacks.add("introComplete");
-			checkLoadSong(getSongPath());
-			if (PlayState.SONG.needsVoices)
-				checkLoadSong(getVocalPath());
-			checkLibrary("shared");
-			if (PlayState.storyWeek > 0)
-				checkLibrary("week" + PlayState.storyWeek);
-			else
-				checkLibrary("tutorial");
-
-			var fadeTime = 0.5;
-			FlxG.camera.fade(FlxG.camera.bgColor, fadeTime, true);
-			new FlxTimer().start(fadeTime + MIN_TIME, function(_) introComplete());
-		});
+				var fadeTime = 0.5;
+				FlxG.camera.fade(FlxG.camera.bgColor, fadeTime, true);
+				new FlxTimer().start(fadeTime + MIN_TIME, function(_) introComplete());
+			}
+		);
 	}
 
 	function checkLoadSong(path:String)
@@ -177,18 +183,27 @@ class LoadingState extends MusicBeatState
 
 	static function getNextState(target:FlxState, stopMusic = false):FlxState
 	{
-		Paths.setCurrentLevel("week" + PlayState.storyWeek);
-		#if NO_PRELOAD_ALL
-		var loaded = isSoundLoaded(getSongPath())
-			&& (!PlayState.SONG.needsVoices || isSoundLoaded(getVocalPath()))
-			&& isLibraryLoaded("shared");
+		var directory:String = 'shared';
+		var weekDir:String = StageData.forceNextDirectory;
+		StageData.forceNextDirectory = null;
 
+		if(weekDir != null && weekDir.length > 0 && weekDir != '') directory = weekDir;
+
+		Paths.setCurrentLevel(directory);
+		trace('Setting asset folder to ' + directory);
+
+		#if NO_PRELOAD_ALL
+		var loaded:Bool = false;
+		if (PlayState.SONG != null) {
+			loaded = isSoundLoaded(getSongPath()) && (!PlayState.SONG.needsVoices || isSoundLoaded(getVocalPath())) && isLibraryLoaded("shared") && isLibraryLoaded(directory);
+		}
+		
 		if (!loaded)
-			return new LoadingState(target, stopMusic);
+			return new LoadingState(target, stopMusic, directory);
 		#end
 		if (stopMusic && FlxG.sound.music != null)
 			FlxG.sound.music.stop();
-
+		
 		return target;
 	}
 

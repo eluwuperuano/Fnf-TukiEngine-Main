@@ -22,6 +22,9 @@ class BGSprite extends FlxSprite
 		} else {
 			if(image != null) {
 				loadGraphic(Paths.image(image));
+				#if MODS_ALLOWED
+				loadGraphic(Paths.modsImages(image));
+				#end
 			}
 			active = false;
 		}

@@ -1,0 +1,10 @@
+{
+	"directory": "week3",
+	"defaultZoom": 1.05,
+	"isHallowenLevel": false,
+	"ispixelStage": false,
+
+	"boyfriend": [770, 100],
+	"girlfriend": [400, 130],
+	"opponent": [100, 100]
+}

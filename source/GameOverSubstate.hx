@@ -17,17 +17,22 @@ class GameOverSubstate extends MusicBeatSubstate
 	var stageSuffix:String = "";
 	var randomGameover:Int = 1;
 
+	public static var characterName:String = 'bf';
+	public static var deathSoundName:String = 'fnf_loss_sfx';
+	public static var loopSoundName:String = 'gameOver';
+	public static var endSoundName:String = 'gameOverEnd';
+
 	public function new(x:Float, y:Float)
 	{
 		var daStage = PlayState.curStage;
-		var daBf:String = '';
+		var characterName:String = '';
 		switch (daStage)
 		{
 			case 'school' | 'schoolEvil':
 				stageSuffix = '-pixel';
-				daBf = 'bf-pixel-dead';
+				characterName = 'bf-pixel-dead';
 			default:
-				daBf = 'bf';
+				characterName = 'bf';
 		}
 
 		var daSong = PlayState.SONG.song.toLowerCase();
@@ -35,20 +40,20 @@ class GameOverSubstate extends MusicBeatSubstate
 		switch (daSong)
 		{
 			case 'stress':
-				daBf = 'bf-holding-gf-dead';
+				characterName = 'bf-holding-gf-dead';
 		}
 
 		super();
 
 		Conductor.songPosition = 0;
 
-		bf = new Boyfriend(x, y, daBf);
+		bf = new Boyfriend(x, y, characterName);
 		add(bf);
 
 		camFollow = new FlxObject(bf.getGraphicMidpoint().x, bf.getGraphicMidpoint().y, 1, 1);
 		add(camFollow);
 
-		FlxG.sound.play(Paths.sound('fnf_loss_sfx' + stageSuffix));
+		FlxG.sound.play(Paths.sound(deathSoundName + stageSuffix));
 		Conductor.changeBPM(100);
 
 		// FlxG.camera.followLerp = 1;
@@ -131,13 +136,6 @@ class GameOverSubstate extends MusicBeatSubstate
 			Conductor.songPosition = FlxG.sound.music.time;
 		}
 	}
-
-	private function coolStartDeath(?vol:Float = 1):Void
-	{
-		if (!isEnding)
-			FlxG.sound.playMusic(Paths.music('gameOver' + stageSuffix), vol);
-	}
-
 	override function beatHit()
 	{
 		super.beatHit();
@@ -147,6 +145,11 @@ class GameOverSubstate extends MusicBeatSubstate
 
 	var isEnding:Bool = false;
 
+	function coolStartDeath(?volume:Float = 1):Void
+	{
+		FlxG.sound.playMusic(Paths.music(loopSoundName), volume);
+	}
+
 	function endBullshit():Void
 	{
 		if (!isEnding)
@@ -154,12 +157,12 @@ class GameOverSubstate extends MusicBeatSubstate
 			isEnding = true;
 			bf.playAnim('deathConfirm', true);
 			FlxG.sound.music.stop();
-			FlxG.sound.play(Paths.music('gameOverEnd' + stageSuffix));
+			FlxG.sound.play(Paths.music(endSoundName));
 			new FlxTimer().start(0.7, function(tmr:FlxTimer)
 			{
 				FlxG.camera.fade(FlxColor.BLACK, 2, false, function()
 				{
-					LoadingState.loadAndSwitchState(new PlayState());
+					MusicBeatState.resetState();
 				});
 			});
 		}

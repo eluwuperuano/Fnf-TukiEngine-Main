@@ -6,6 +6,10 @@ import flixel.graphics.frames.FlxAtlasFrames;
 import openfl.utils.Assets;
 import haxe.Json;
 import haxe.format.JsonParser;
+#if MODS_ALLOWED
+import sys.io.File;
+import sys.FileSystem;
+#end
 
 class MenuCharacter extends FlxSprite
 {
@@ -39,11 +43,26 @@ class MenuCharacter extends FlxSprite
 			default:
 				var characterPath:String = 'charactersmenu/' + character + '.json';
 				var rawJson = null;
+				var rawJson = null;
+
+				#if MODS_ALLOWED
+				var path:String = Paths.modFolders(characterPath);
+				if (!FileSystem.exists(path)) {
+					path = Paths.getPreloadPath(characterPath);
+				}
+
+				if(!FileSystem.exists(path)) {
+					path = Paths.getPreloadPath('charactersmenu/' + DEFAULT_CHARACTER + '.json');
+				}
+				rawJson = File.getContent(path);
+
+				#else
 				var path:String = Paths.getPreloadPath(characterPath);
 				if(!Assets.exists(path)) {
 					path = Paths.getPreloadPath('charactersmenu/' + DEFAULT_CHARACTER + '.json');
 				}
 				rawJson = Assets.getText(path);
+				#end
 				
 				var fileport:MenuCharacterFile = cast Json.parse(rawJson);
 				frames = Paths.getSparrowAtlas('charactersmenu/' + fileport.image);

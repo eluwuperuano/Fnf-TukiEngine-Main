@@ -1,1 +1,126 @@
-{"animations":[{"offsets":[0,0],"loop":false,"fps":24,"anim":"idle","indices":[],"name":"BF IDLE"},{"offsets":[0,0],"loop":false,"fps":24,"anim":"singUP","indices":[],"name":"BF UP NOTE"},{"offsets":[0,0],"loop":false,"fps":24,"anim":"singLEFT","indices":[],"name":"BF LEFT NOTE"},{"offsets":[0,0],"loop":false,"fps":24,"anim":"singRIGHT","indices":[],"name":"BF RIGHT NOTE"},{"offsets":[0,0],"loop":false,"fps":24,"anim":"singDOWN","indices":[],"name":"BF DOWN NOTE"},{"offsets":[0,0],"loop":false,"fps":24,"anim":"singUPmiss","indices":[],"name":"BF UP MISS"},{"offsets":[0,0],"loop":false,"fps":24,"anim":"singLEFTmiss","indices":[],"name":"BF LEFT MISS"},{"offsets":[0,0],"loop":false,"fps":24,"anim":"singRIGHTmiss","indices":[],"name":"BF RIGHT MISS"},{"offsets":[0,0],"loop":false,"fps":24,"anim":"singDOWNmiss","indices":[],"name":"BF DOWN MISS"}],"note_skin":"NOTE_assets","image":"characters/bfPixel","charpos":[0,350],"health_drain":true,"healthicon":"bf-pixel","note_colors":["#E276FF","#3DCAFF","#71E300","#FF884E"],"startingAnim":"idle","camerapos":[140,-50],"flip_x":true,"healthbar_colors":"#7BD6F6","antialiasing":false,"sing":4,"scale":6}
+{
+    "animations": [
+        {
+            "offsets": [
+                0,
+                0
+            ],
+            "loop": false,
+            "fps": 24,
+            "anim": "idle",
+            "indices": [],
+            "name": "BF IDLE"
+        },
+        {
+            "offsets": [
+                0,
+                0
+            ],
+            "loop": false,
+            "fps": 24,
+            "anim": "singUP",
+            "indices": [],
+            "name": "BF UP NOTE"
+        },
+        {
+            "offsets": [
+                0,
+                0
+            ],
+            "loop": false,
+            "fps": 24,
+            "anim": "singLEFT",
+            "indices": [],
+            "name": "BF LEFT NOTE"
+        },
+        {
+            "offsets": [
+                0,
+                0
+            ],
+            "loop": false,
+            "fps": 24,
+            "anim": "singRIGHT",
+            "indices": [],
+            "name": "BF RIGHT NOTE"
+        },
+        {
+            "offsets": [
+                0,
+                0
+            ],
+            "loop": false,
+            "fps": 24,
+            "anim": "singDOWN",
+            "indices": [],
+            "name": "BF DOWN NOTE"
+        },
+        {
+            "offsets": [
+                0,
+                0
+            ],
+            "loop": false,
+            "fps": 24,
+            "anim": "singUPmiss",
+            "indices": [],
+            "name": "BF UP MISS"
+        },
+        {
+            "offsets": [
+                0,
+                0
+            ],
+            "loop": false,
+            "fps": 24,
+            "anim": "singLEFTmiss",
+            "indices": [],
+            "name": "BF LEFT MISS"
+        },
+        {
+            "offsets": [
+                0,
+                0
+            ],
+            "loop": false,
+            "fps": 24,
+            "anim": "singRIGHTmiss",
+            "indices": [],
+            "name": "BF RIGHT MISS"
+        },
+        {
+            "offsets": [
+                0,
+                0
+            ],
+            "loop": false,
+            "fps": 24,
+            "anim": "singDOWNmiss",
+            "indices": [],
+            "name": "BF DOWN MISS"
+        }
+    ],
+    "note_skin": "NOTE_assets",
+    "image": "characters/bfPixel",
+    "charpos": [
+        0,
+        350
+    ],
+    "health_drain": true,
+    "healthicon": "bf-pixel",
+    "note_colors": [
+        "#E276FF",
+        "#3DCAFF",
+        "#71E300",
+        "#FF884E"
+    ],
+    "camerapos": [
+        140,
+        -50
+    ],
+    "flip_x": true,
+    "healthbar_colors": "#7BD6F6",
+    "antialiasing": false,
+    "sing": 4,
+    "scale": 6
+}

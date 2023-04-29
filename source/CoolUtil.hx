@@ -1,5 +1,6 @@
 package;
 
+import flixel.util.FlxSave;
 import flixel.FlxG;
 import flixel.graphics.FlxGraphic;
 import flixel.graphics.frames.FlxAtlasFrames;
@@ -15,15 +16,18 @@ using StringTools;
 
 class CoolUtil
 {
-	public static var difficultyArray:Array<String> = ['EASY', "NORMAL", "HARD"];
-
-	public static var defaultDifficulty:String = 'NORMAL'; //The chart that has no suffix and starting difficulty on Freeplay/Story Mode
+	public static var defaultDifficulties:Array<String> = [
+		'Easy',
+		'Normal',
+		'Hard'
+	];
+	public static var defaultDifficulty:String = 'Normal'; //The chart that has no suffix and starting difficulty on Freeplay/Story Mode
 
 	public static var difficulties:Array<String> = [];
-	
+
 	public static function difficultyString():String
 	{
-		return difficultyArray[PlayState.storyDifficulty];
+		return difficulties[PlayState.storyDifficulty].toUpperCase();
 	}
 	
 	public static function getDifficultyFilePath(num:Null<Int> = null)
@@ -92,5 +96,17 @@ class CoolUtil
 		return #if (flixel < "5.0.0") folder #else FlxG.stage.application.meta.get('company')
 			+ '/'
 			+ FlxSave.validate(FlxG.stage.application.meta.get('file')) #end;
+	}
+	public static function listFromString(string:String):Array<String>
+	{
+		var daList:Array<String> = [];
+		daList = string.trim().split('\n');
+
+		for (i in 0...daList.length)
+		{
+			daList[i] = daList[i].trim();
+		}
+
+		return daList;
 	}
 }

@@ -37,7 +37,6 @@
     }],
     "healthbar_colors": "#A5004D",
     "note_colors": ["#A5004D", "#A5004D", "#A5004D", "#A5004D"],
-    "startingAnim": "danceRight",
     "healthicon": "gf",
     "pixel_note": true,
     "antialiasing": false,

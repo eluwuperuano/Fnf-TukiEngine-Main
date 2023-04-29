@@ -1,0 +1,15 @@
+{
+    "stagesObjects": [
+        {
+            "objName": "stage1",
+            "imageFile": "stagefront",
+            "objXY": [-650, 600],
+            "antianaliting": true,
+            "scroll": [1, 1],
+            "playAnim": "",
+            "animObj": [""],
+            "loop": false,
+            "scaleObj": 1
+        }
+    ]
+}

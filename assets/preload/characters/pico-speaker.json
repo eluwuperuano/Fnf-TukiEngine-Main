@@ -37,7 +37,6 @@
     }],
     "healthbar_colors": "#b7d855",
     "note_colors": ["#b7d855", "#b7d855", "#b7d855", "#b7d855"],
-    "startingAnim": "shoot1",
     "healthicon": "pico",
     "antialiasing": true,
     "camerapos": [0, 0],
