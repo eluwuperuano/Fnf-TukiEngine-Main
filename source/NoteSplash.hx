@@ -1,6 +1,5 @@
 package;
 
-import shaderslmfao.ColorRgb.ColoredNoteShader;
 import flixel.util.FlxColor;
 import flixel.FlxG;
 import flixel.FlxSprite;
@@ -14,7 +13,7 @@ class NoteSplash extends FlxSprite
 
 		frames = Paths.getSparrowAtlas('noteSplashes');
 
-		animation.addByPrefix('note1-0', 'note impact 1  blue', 24, false);
+		animation.addByPrefix('note1-0', 'note impact 1 blue', 24, false);
 		animation.addByPrefix('note2-0', 'note impact 1 green', 24, false);
 		animation.addByPrefix('note0-0', 'note impact 1 purple', 24, false);
 		animation.addByPrefix('note3-0', 'note impact 1 red', 24, false);

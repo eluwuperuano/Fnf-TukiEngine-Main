@@ -1,7 +1,7 @@
 package;
 
-import shaderslmfao.ColorRgb.ColoredNoteShader;
-import shaderslmfao.ColorSwap;
+import shaderslmfao.PublicShaders.ColoredNoteShader;
+import shaderslmfao.PublicShaders.ColorSwap;
 import ui.AtlasText.Case;
 import flixel.FlxSprite;
 import flixel.graphics.frames.FlxAtlasFrames;

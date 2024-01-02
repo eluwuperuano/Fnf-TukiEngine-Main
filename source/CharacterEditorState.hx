@@ -1,6 +1,6 @@
 package;
 
-import shaderslmfao.ColorRgb.ColoredNoteShader;
+import shaderslmfao.PublicShaders.ColoredNoteShader;
 import haxe.io.Path;
 import flixel.util.FlxCollision;
 import flixel.FlxG;
@@ -29,6 +29,7 @@ import openfl.events.IOErrorEvent;
 import haxe.Json;
 import Character;
 import flixel.system.debug.interaction.tools.Pointer.GraphicCursorCross;
+import lime.system.Clipboard;
 
 
 using StringTools;
@@ -1068,7 +1069,6 @@ class CharacterEditorState extends MusicBeatState
 			_file.save(data, daAnim + "Offsets.txt");
 		}
 	}*/
-
 	function onSaveComplete(_):Void
 	{
 		_file.removeEventListener(Event.COMPLETE, onSaveComplete);
@@ -1079,8 +1079,8 @@ class CharacterEditorState extends MusicBeatState
 	}
 
 	/**
-		* Called when the save file dialog is cancelled.
-		*/
+	 * Called when the save file dialog is cancelled.
+	 */
 	function onSaveCancel(_):Void
 	{
 		_file.removeEventListener(Event.COMPLETE, onSaveComplete);
@@ -1090,8 +1090,8 @@ class CharacterEditorState extends MusicBeatState
 	}
 
 	/**
-		* Called if there is an error while saving the gameplay recording.
-		*/
+	 * Called if there is an error while saving the gameplay recording.
+	 */
 	function onSaveError(_):Void
 	{
 		_file.removeEventListener(Event.COMPLETE, onSaveComplete);
@@ -1121,7 +1121,7 @@ class CharacterEditorState extends MusicBeatState
 			"sing": char.singDuration,
 		};
 
-		var data:String = Json.stringify(json);
+		var data:String = Json.stringify(json, "\t");
 
 		if (data.length > 0)
 		{
@@ -1129,7 +1129,18 @@ class CharacterEditorState extends MusicBeatState
 			_file.addEventListener(Event.COMPLETE, onSaveComplete);
 			_file.addEventListener(Event.CANCEL, onSaveCancel);
 			_file.addEventListener(IOErrorEvent.IO_ERROR, onSaveError);
-			_file.save(data, daAnim + ".json");
+			_file.save(data, daAnim + "/right.json");
 		}
+	}
+
+	function ClipboardAdd(prefix:String = ''):String
+	{
+		if (prefix.toLowerCase().endsWith('v')) // probably copy paste attempt
+		{
+			prefix = prefix.substring(0, prefix.length - 1);
+		}
+
+		var text:String = prefix + Clipboard.text.replace('\n', '');
+		return text;
 	}
 }

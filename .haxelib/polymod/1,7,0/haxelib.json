@@ -1,0 +1,13 @@
+{
+  "name": "polymod",
+  "url" : "https://github.com/larsiusprime/polymod",
+  "license": "MIT",
+  "tags": ["mod","game","data","asset"],
+  "description": "An atomic modding framework for Haxe games",
+  "version": "1.7.0",
+  "releasenote": "Dependencies, ZIP mods, blacklisting, and other improvements.",
+  "contributors": ["MasterEric", "larsiusprime"],
+  "dependencies": {
+    "thx.semver": ""
+  }
+}

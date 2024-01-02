@@ -23,6 +23,10 @@ typedef JsonStage = {
 
 	var isHallowenLevel:Bool;
 	var ispixelStage:Bool;
+
+	var camera_boyfriend:Array<Float>;
+	var camera_opponent:Array<Float>;
+	var camera_girlfriend:Array<Float>;
 }
 
 class StageData {

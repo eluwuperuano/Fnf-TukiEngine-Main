@@ -37,6 +37,15 @@ class GameplaySubState extends BaseOptionsMenu
 			true);
 		addOption(option);
 
+		var option:Option = new Option(
+			'Opponent Strums Visible',
+			"opponent strums now is invisible",
+			'opponentStrums',
+			'bool',
+			false
+		);
+		addOption(option);
+
 		super();
 	}
 }

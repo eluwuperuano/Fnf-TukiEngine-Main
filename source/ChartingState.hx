@@ -1,5 +1,6 @@
 package;
 
+import flixel.util.FlxSort;
 import Conductor.BPMChangeEvent;
 import Section.SwagSection;
 import Song.SwagSong;
@@ -20,7 +21,7 @@ import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.group.FlxGroup;
 import flixel.math.FlxMath;
 import flixel.math.FlxPoint;
-import flixel.system.FlxSound;
+import flixel.sound.FlxSound;
 import flixel.text.FlxText;
 import flixel.ui.FlxButton;
 import flixel.ui.FlxSpriteButton;
@@ -51,7 +52,8 @@ class ChartingState extends MusicBeatState
 	[
 		'',
 		'Alt Animation',
-		'Hey!'
+		'Hey!',
+		'Opponent Note'
 	];
 	private var noteTypeIntMap:Map<Int, String> = new Map<Int, String>();
 	private var noteTypeMap:Map<String, Null<Int>> = new Map<String, Null<Int>>();
@@ -62,9 +64,11 @@ class ChartingState extends MusicBeatState
 		['Change Character', "Value 1: Character to change\nValue 2: New character's name\n\nOn Value 1, Boyfriend is 0,\nDad is 1 and Girlfriend is 2"],
 		['letritas', "Value 1: Text\nValue 2: Color Text\n Piter que estas haciendo!!"],
 		['Set Cam Zoom', "value 1: New Zoom Value\nor write null to return to the original value"],
+		['Camera Pos', "val1 is X and Val2 is Y, if your want to go back to normal just leave it empty"],
 		['Kill Notes', "no se pa que mierda lo usaras pero bueno"],
 		['Play Anim', 'value 1: dad|bf|gf\nvalue 2: anim name'],
-		['Lighting', 'value 1: on or 0, activate event\n off or 1, desactivate event']
+		['Lighting', 'value 1: on or 0, activate event\n off or 1, desactivate event'],
+		['Flash', 'value1: Color of flash\nvalue2: time']
 	];
 
 	var _file:FileReference;
@@ -474,7 +478,7 @@ class ChartingState extends MusicBeatState
 					var path = haxe.io.Path.join([directory, file]);
 					if (!FileSystem.isDirectory(path) && file.endsWith('.json')) {
 						var stageToCheck:String = file.substr(0, file.length - 5);
-						if(!tempMap.exists(stageToCheck)) {
+						if(!stageToCheck.endsWith('-OBJS') && !tempMap.exists(stageToCheck)) {
 							tempMap.set(stageToCheck, true);
 							stages.push(stageToCheck);
 						}
@@ -2004,8 +2008,17 @@ class ChartingState extends MusicBeatState
 
 	private function saveEvents()
 	{
-		return FlxSort.byValues(FlxSort.ASCENDING, Obj1[0], Obj2[0]);
-	}
+		var events:Array<SwagSection> = [];
+		for (sec in 0..._song.notes.length) {
+			if(_song.notes[sec] == null) continue;
+
+			var arrayNotes:Array<Dynamic> = [];
+			for (i in 0..._song.notes[sec].sectionNotes.length) {
+				var note:Array<Dynamic> = _song.notes[sec].sectionNotes[i];
+				if(note != null && note[1] < 0) {
+					arrayNotes.push(note);
+				}
+			}
 
 			var sex:SwagSection = {
 				sectionNotes: arrayNotes,

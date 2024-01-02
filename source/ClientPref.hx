@@ -8,6 +8,10 @@ import flixel.util.FlxSave;
 
 class ClientPref
 {
+	public static var controllerMode:Bool = false;
+
+	public static var camZooms:Bool = true;
+
 	public static var noteOffset:Int = 0;
 
 	public static var globalAntialiasing:Bool = true;
@@ -31,12 +35,13 @@ class ClientPref
 		'reset' => [R, NONE]
 	];
 	public static var defaultKeys:Map<String, Array<FlxKey>> = null;
-
-	public static var colorsNote:Int = 0xFFFFFFFF;
 	public static var middleScroll:Bool = false;
 	public static var downScroll:Bool = false;
 	public static var noteRainbow:Bool = true;
 	public static var customArrowColors_allChars:Bool = false;
+	public static var changesides:Bool = false;
+
+	public static var opponentStrums:Bool = false;
 
 	public static function loadDefaultKeys()
 	{
@@ -47,7 +52,7 @@ class ClientPref
 	{
 		FlxG.save.data.globalAntialiasing = globalAntialiasing;
 		FlxG.save.data.ghostTapping = ghostTapping;
-		FlxG.save.data.colorsNote = colorsNote;
+
 
 		var save:FlxSave = new FlxSave();
 		save.bind('controls',
@@ -59,10 +64,17 @@ class ClientPref
 		FlxG.save.data.downScroll = downScroll;
 		FlxG.save.data.noteRainbow = noteRainbow;
 		FlxG.save.data.customArrowColors_allChars = customArrowColors_allChars;
+		FlxG.save.data.changesides = changesides;
+		FlxG.save.data.camZooms = camZooms;
+		FlxG.save.data.opponentStrums = opponentStrums;
 	}
 
 	public static function loadPrefs()
 	{
+		if (FlxG.save.data.camZooms != null)
+		{
+			camZooms = FlxG.save.data.camZooms;
+		}
 		if (FlxG.save.data.globalAntialiasing != null)
 		{
 			globalAntialiasing = FlxG.save.data.globalAntialiasing;
@@ -70,10 +82,6 @@ class ClientPref
 		if (FlxG.save.data.ghostTapping != null)
 		{
 			ghostTapping = FlxG.save.data.ghostTapping;
-		}
-		if (FlxG.save.data.colorsNote != null)
-		{
-			colorsNote = FlxG.save.data.colorsNote;
 		}
 
 		var save:FlxSave = new FlxSave();
@@ -103,10 +111,37 @@ class ClientPref
 		{
 			customArrowColors_allChars = FlxG.save.data.customArrowColors_allChars;
 		}
+		if (FlxG.save.data.changesides != null)
+		{
+			changesides = FlxG.save.data.changesides;
+		}
+		if (FlxG.save.data.opponentStrums != null)
+		{
+			opponentStrums = FlxG.save.data.opponentStrums;
+		}	
 	}
 
 	public static function reloadControls()
 	{
 		PlayerSettings.player1.controls.setKeyboardScheme(KeyboardScheme.Solo);
+	}
+
+	public static function copyKey(arrayToCopy:Array<FlxKey>):Array<FlxKey>
+	{
+		var copiedArray:Array<FlxKey> = arrayToCopy.copy();
+		var i:Int = 0;
+		var len:Int = copiedArray.length;
+
+		while (i < len)
+		{
+			if (copiedArray[i] == NONE)
+			{
+				copiedArray.remove(NONE);
+				--i;
+			}
+			i++;
+			len = copiedArray.length;
+		}
+		return copiedArray;
 	}
 }

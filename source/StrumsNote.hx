@@ -10,6 +10,7 @@ class StrumsNote extends FlxSprite
     public var mustPress:Bool = false;
 	
 	private var player:Int;
+	public var downScroll:Bool = false;//plan on doing scroll directions soon -bb
 	
 	public var texture(default, set):String = null;
 

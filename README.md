@@ -1,5 +1,5 @@
 # Tuki Engine
-Esta es una modificacion que planeo seguir ampleando asta lograr conseguir un engine al conocido.
+Esta es una modificacion que planeo seguir ampleando asta lograr conseguir un engine conocido.
 Gracias
  
 # Friday Night Funkin Originali

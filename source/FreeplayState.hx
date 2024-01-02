@@ -9,7 +9,7 @@ import flixel.addons.display.FlxGridOverlay;
 import flixel.addons.transition.FlxTransitionableState;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.math.FlxMath;
-import flixel.system.FlxSound;
+import flixel.sound.FlxSound;
 import flixel.text.FlxText;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
@@ -55,6 +55,15 @@ class FreeplayState extends MusicBeatState
 
 	override function create()
 	{
+		/*switch (FreeplaySelectState.freeplayCats[FreeplaySelectState.curCategory].toLowerCase())
+		{
+			case 'tutorial':
+				addSong('tutorial', 0, 'gf', 0xff9271fd);
+			case 'week1':
+				addSong('Bopeebo', 1, 'dad', 0xff9271fd);
+				addSong('Fresh', 1, 'dad', 0xff9271fd);
+				addSong('Dad Battle', 1, 'dad', 0xff9271fd);	
+		}*/
 		// Paths.clearStoredMemory();
 		// Paths.clearUnusedMemory();
 

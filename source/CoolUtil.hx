@@ -16,6 +16,9 @@ using StringTools;
 
 class CoolUtil
 {
+	public static function getLastOfArray<T>(a:Array<T>):T {
+		return a[a.length - 1];
+	}
 	public static var defaultDifficulties:Array<String> = [
 		'Easy',
 		'Normal',

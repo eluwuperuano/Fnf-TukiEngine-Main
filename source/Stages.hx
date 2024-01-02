@@ -1,18 +1,35 @@
 package;
+//import flixel.system.FlxSound;
+import flixel.FlxState;
+import haxe.Json;
 import flixel.util.FlxTimer;
 import openfl.utils.Assets;
 import flixel.math.FlxAngle;
 import flixel.group.FlxGroup;
 import flixel.addons.effects.chainable.FlxWaveEffect;
 import flixel.group.FlxGroup.FlxTypedGroup;
-import flixel.system.FlxSound;
+import flixel.sound.FlxSound;
 import flixel.FlxG;
 import flixel.util.FlxColor;
 import shaderslmfao.BuildingShaders;
 import flixel.FlxSprite;
+
+using StringTools;
+
+#if MODS_ALLOWED
+import sys.FileSystem;
+import sys.io.File;
+#end
+
 class Stages extends MusicBeatState{
-    var another:PlayState;
-    public var curStage:String;
+    //var another:PlayState;
+    public var curStage:String = DEFAULT_STAGE;
+
+	public var danceIdle:Bool = false; //Character use "danceLeft" and "danceRight" instead of "idle"
+	public var skipDance:Bool = false;
+	public var debugMode:Bool = false;
+
+	var data:StagesJson;
 
 
 	//stages 
@@ -49,6 +66,11 @@ class Stages extends MusicBeatState{
             public var foregroundSprites:FlxTypedGroup<BGSprite>;
 	//end
 
+	public var obj:FlxSprite;
+
+	public static var DEFAULT_STAGE:String = 'stage';
+
+	public var addFront:String;
 
     public function new(stageSelec:String) {
         super();
@@ -56,39 +78,10 @@ class Stages extends MusicBeatState{
 
 		foregroundSprites = new FlxTypedGroup<BGSprite>();
 
+		phillyLightsColors = [0xFF31A2FD, 0xFF31FD8C, 0xFFFB33F5, 0xFFFD4531, 0xFFFBA633];
+
         switch (curStage)
-        {
-			case 'stage':
-
-				var bg:BGSprite = new BGSprite('stageback', -600, -200, 0.9, 0.9);
-				add(bg);
-
-				var stageFront:BGSprite = new BGSprite('stagefront', -650, 600, 0.9, 0.9);
-				stageFront.setGraphicSize(Std.int(stageFront.width * 1.1));
-				stageFront.updateHitbox();
-				stageFront.antialiasing = true;
-				stageFront.scrollFactor.set(0.9, 0.9);
-				stageFront.active = false;
-				add(stageFront);
-
-				var stageCurtains:BGSprite = new BGSprite('stagecurtains', -500, -300, 1.3, 1.3);
-				stageCurtains.setGraphicSize(Std.int(stageCurtains.width * 0.9));
-				stageCurtains.updateHitbox();
-				stageCurtains.antialiasing = true;
-				stageCurtains.scrollFactor.set(1.3, 1.3);
-				stageCurtains.active = false;
-
-				add(stageCurtains);
-
-			case 'spooky':
-
-
-				halloweenBG = new BGSprite('halloween_bg', -200, -100, ['halloweem bg0', 'halloweem bg lightning strike']);
-				halloweenBG.animation.play('halloweem bg');
-				halloweenBG.antialiasing = true;
-				add(halloweenBG);
-				
-
+        {		
 			case 'philly':
 
 				phillybg = new BGSprite('philly/sky', -100, 0, 0.1, 0.1);
@@ -341,10 +334,109 @@ class Stages extends MusicBeatState{
 
 				var fgTank3:BGSprite = new BGSprite('tank3', 1300, 1200, 3.5, 2.5, ['fg']);
 				foregroundSprites.add(fgTank3);
+			default:
+				//Debug.logInfo('Generating character (${curCharacter}) from JSON data...');
+				var characterPath:String = 'stages/' + curStage + '-OBJS.json';
+
+				#if MODS_ALLOWED
+				var path:String = Paths.modFolders(characterPath);
+				if (!FileSystem.exists(path))
+				{
+					path = Paths.getPreloadPath(characterPath);
+				}
+
+				if (!FileSystem.exists(path))
+				#else
+				var path:String = Paths.getPreloadPath(characterPath);
+				if (!Assets.exists(path))
+				#end
+				{
+					path = Paths.getPreloadPath('stages/' + DEFAULT_STAGE + '-OBJS.json'); //If a character couldn't be found, change him to BF just to prevent a crash
+				}
+
+				#if MODS_ALLOWED
+				var jsonData = File.getContent(path);
+				#else
+				// Load the data from JSON and cast it to a struct we can easily read.
+				var jsonData = Assets.getText(path);
+				#end
+				/*if (jsonData == null)
+				{
+					Debug.logError('Failed to parse JSON data for character ${curCharacter}');
+					return;
+				}*/
+		
+				data = cast Json.parse(jsonData);
+
+				if (data.stagesobjs != null && data.stagesobjs.length > 0)
+				{
+					for (allobjs in data.stagesobjs)
+					{
+
+						obj = new FlxSprite(allobjs.objXY[0], allobjs.objXY[1]);
+		
+						if (allobjs.animationsArray != null && allobjs.animationsArray.length > 0)
+						{
+							var spriteType = "sparrow";
+					
+							#if MODS_ALLOWED
+							var modTxtToFind:String = Paths.modsTxt(allobjs.imageName);
+							var txtToFind:String = Paths.getPath('images/' + allobjs.imageName + '.txt', TEXT);
+			
+							// var modTextureToFind:String = Paths.modFolders("images/"+json.image);
+							// var textureToFind:String = Paths.getPath('images/' + json.image, new AssetType();
+			
+							if (FileSystem.exists(modTxtToFind) || FileSystem.exists(txtToFind) || Assets.exists(txtToFind))
+							#else
+							if (Assets.exists(Paths.getPath('images/' + allobjs.imageName + '.txt', TEXT)))
+							#end	
+							{
+								spriteType = "packer";
+							}
+
+							switch (spriteType){
+								
+								case "packer":
+									obj.frames = Paths.getPackerAtlas(allobjs.imageName, allobjs.objDirectory);
+								
+								case "sparrow":
+									obj.frames = Paths.getSparrowAtlas(allobjs.imageName, allobjs.objDirectory);
+							}
+							if(allobjs.animationsArray != null && allobjs.animationsArray.length > 0)
+							{
+								for (anim in allobjs.animationsArray)
+								{
+									if (anim.indices != null && anim.indices.length > 0)
+									{
+										obj.animation.addByIndices(anim.nameAnim, anim.animation, anim.indices, "", anim.objfps, anim.objLoop);
+									} else {
+										obj.animation.addByPrefix(anim.nameAnim, anim.animation, anim.objfps, anim.objLoop);
+									}
+								}	
+							}
+
+							//obj.animation.play('idle');
+						}else{
+							obj.loadGraphic(Paths.image(allobjs.imageName, allobjs.objDirectory));
+							obj.active = false;
+						}
+						obj.flipX = allobjs.objFlipX;
+						obj.scrollFactor.set(allobjs.objScroll[0], allobjs.objScroll[1]);
+						obj.antialiasing = allobjs.objAntianaliting;
+						if (allobjs.objScale != 1)
+						{
+							obj.setGraphicSize(Std.int(obj.width * allobjs.objScale));
+							obj.updateHitbox();
+						}
+						add(obj);
+					}
+				}
+
         }
 
 
     }
+
 
 	override public function update(elapsed:Float) {
 
@@ -393,7 +485,7 @@ class Stages extends MusicBeatState{
 		if (trainSound.time >= 4700)
 		{
 			startedMoving = true;
-			another.gf.playAnim('hairBlow');
+			//another.gf.playAnim('hairBlow');
 		}
 
 		if (startedMoving)
@@ -416,12 +508,12 @@ class Stages extends MusicBeatState{
 
 	function trainReset():Void
 	{
-		if (another.gf != null)
+		/*if (another.gf != null)
 		{
 			another.gf.danced = false; // Sets head to the correct position once the animation ends
 			another.gf.playAnim('hairFall');
 			another.gf.specialAnim = true;
-		}
+		}*/
 		phillyTrain.x = FlxG.width + 200;
 		trainMoving = false;
 		// trainSound.stop();
@@ -520,6 +612,11 @@ class Stages extends MusicBeatState{
 				{
 					spr.dance();
 				});
+			default:
+				if (data != null)
+				{
+					dance();
+				}	
 		}
 		
 	}
@@ -536,8 +633,8 @@ class Stages extends MusicBeatState{
 		lightningStrikeBeat = curBeat;
 		lightningOffset = FlxG.random.int(8, 24);
 
-		another.boyfriend.playAnim('scared', true);
-		another.gf.playAnim('scared', true);
+		/*another.boyfriend.playAnim('scared', true);
+		another.gf.playAnim('scared', true);*/
 	}
 
 	var tankResetShit:Bool = false;
@@ -558,4 +655,52 @@ class Stages extends MusicBeatState{
 			tankGround.y = 1300 + Math.sin(FlxAngle.asRadians((tankAngle * daAngleOffset) + 180)) * 1100;
 		//}
 	}
+
+	public var danced:Bool = false;
+
+	public function dance()
+	{
+		if (!debugMode && !skipDance)
+		{
+			if(obj.animation.getByName('danceRight') != null)
+			{
+				danced = !danced;
+
+				if (danced)
+					playAnim('danceRight');
+				else
+					playAnim('danceLeft');
+			}
+			else if(obj.animation.getByName('idle') != null) {
+					playAnim('idle');
+			}
+		}
+	}
+
+	public function playAnim(AnimName:String, Force:Bool = false, Reversed:Bool = false, Frame:Int = 0):Void
+	{
+		obj.animation.play(AnimName, Force, Reversed, Frame);
+	}
+}
+
+typedef StagesJson = {
+	var stagesobjs:Array<StageObjJson>;
+}
+
+typedef StageObjJson = {
+	var imageName:String;
+	var objXY:Array<Int>;
+	var objScroll:Array<Int>;
+	var objAntianaliting:Bool;
+	var objScale:Float;
+	var objFlipX:Bool;
+	var objDirectory:String;
+	var animationsArray:Array<AnimationsObj>;
+}
+typedef AnimationsObj = {
+	var nameAnim:String;
+	var animation:String;
+	var objfps:Int;
+	var objLoop:Bool;
+	var indices:Array<Int>;
 }

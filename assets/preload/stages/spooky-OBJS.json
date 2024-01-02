@@ -1,0 +1,27 @@
+{
+	"stagesobjs" : [
+		{
+			"imageName": "halloween_bg",
+			"objXY": [-200, -100],
+			"objScroll": [1, 1],
+			"objAntianaliting": true,
+			"objScale": 1,
+			"objFlipX": false,
+			"objDirectory": "week2",
+			"animationsArray": [
+				{
+					"nameAnim": "idle",
+					"animation": "halloweem bg0",
+					"objfps": 12,
+					"objLoop": false
+				},
+				{
+					"nameAnim": "lightning",
+					"animation": "halloweem bg lightning strike",
+					"objfps": 24,
+					"objLoop": false
+				}
+			]
+		}
+	]
+}

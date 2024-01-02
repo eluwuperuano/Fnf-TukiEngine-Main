@@ -1,4 +1,4 @@
-package ui;
+/*package ui;
 
 import NGio;
 import ui.Prompt;
@@ -104,4 +104,4 @@ class NgPrompt extends Prompt
 		prompt.onNo = prompt.close;
 		return prompt;
 	}
-}
+}*/

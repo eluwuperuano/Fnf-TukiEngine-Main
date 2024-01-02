@@ -1,0 +1,28 @@
+{
+	"stagesobjs" : [
+		{
+			"imageName": "stageback",
+			"objXY": [-600, -200],
+			"objScroll": [0.9, 0.9],
+			"objAntianaliting": true,
+			"objScale": 1,
+			"objFlipX": false
+		},
+		{
+			"imageName": "stagecurtains",
+			"objXY": [-500, -300],
+			"objScroll": [1.3, 1.3],
+			"objAntianaliting": true,
+			"objScale": 1,
+			"objFlipX": false
+		},
+		{
+			"imageName": "stagefront",
+			"objXY": [-650, 600],
+			"objScroll": [0.9, 0.9],
+			"objAntianaliting": true,
+			"objScale": 1,
+			"objFlipX": false
+		}
+	]
+}

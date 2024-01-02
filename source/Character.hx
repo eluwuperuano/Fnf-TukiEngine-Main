@@ -54,12 +54,11 @@ class Character extends FlxSprite
 	public var animationsArray:Array<AnimArray> = [];
 	public var stunned:Bool = false;
 
-
 	public function new(x:Float, y:Float, ?character:String = "bf", ?isPlayer:Bool = false)
 	{
 		super(x, y);
 
-		//barColor = isPlayer ? 0xFF66FF33 : 0xFFFF0000;
+		barColor = isPlayer ? "#66FF33" : "#FF0000";
 		animOffsets = new Map<String, Array<Dynamic>>();
 		curCharacter = character;
 		this.isPlayer = isPlayer;
@@ -171,7 +170,44 @@ class Character extends FlxSprite
 					quickAnimAdd('idle', 'BF idle dance');
 				}
 
-				notesColor = [data.note_colors[0], data.note_colors[1], data.note_colors[2], data.note_colors[3]];
+				#if MODS_ALLOWED
+				var path21:String = Paths.modFolders(characterPath);
+				if (!FileSystem.exists(path21))
+				{
+					path21 = Paths.getPreloadPath(characterPath);
+				}
+
+				if (!FileSystem.exists(path21))
+				#else
+				var path21:String = Paths.getPreloadPath(characterPath);
+				if (!Assets.exists(path21))
+				#end
+				{
+					path21 = Paths.getPreloadPath('data/notesColor.json'); //If a character couldn't be found, change him to BF just to prevent a crash
+				}
+
+				#if MODS_ALLOWED
+				var jsonData21 = File.getContent(path21);
+				#else
+				// Load the data from JSON and cast it to a struct we can easily read.
+				var jsonData21 = Assets.getText(path21);
+				#end
+				var notes:NotesColorConfing = cast Json.parse(jsonData21);
+
+				if (data.note_colors != null)
+				{
+					if (data.note_colors.length > 0)
+						{
+							notesColor = [data.note_colors[0], data.note_colors[1], data.note_colors[2], data.note_colors[3]];
+						}
+				} else {
+					notesColor = [
+						notes.arrowColor[0],
+						notes.arrowColor[1],
+						notes.arrowColor[2],
+						notes.arrowColor[3],
+					];
+				}
 
 				if(data.healthbar_colors != null && data.healthbar_colors.length > 2)	
 				    barColor = data.healthbar_colors;
@@ -192,26 +228,9 @@ class Character extends FlxSprite
 		//animation.finish();
 
 		if (isPlayer)
-		{
-			flipX = !flipX;
-
-			// Doesn't flip for BF, since his are already in the right place???|
-			/*if (!curCharacter.startsWith('bf'))
 			{
-				// var animArray
-				var oldRight = animation.getByName('singRIGHT').frames;
-				animation.getByName('singRIGHT').frames = animation.getByName('singLEFT').frames;
-				animation.getByName('singLEFT').frames = oldRight;
-
-				// IF THEY HAVE MISS ANIMATIONS??
-				if (animation.getByName('singRIGHTmiss') != null)
-				{
-					var oldMiss = animation.getByName('singRIGHTmiss').frames;
-					animation.getByName('singRIGHTmiss').frames = animation.getByName('singLEFTmiss').frames;
-					animation.getByName('singLEFTmiss').frames = oldMiss;
-				}
-			}*/
-		}
+				flipX = !flipX;
+			}
 
 		switch (curCharacter)
 		{
@@ -406,4 +425,8 @@ typedef AnimArray = {
 	var loop:Bool;
 	var indices:Array<Int>;
 	var offsets:Array<Int>;
+}
+
+typedef NotesColorConfing = {
+	var arrowColor:Array<String>;
 }

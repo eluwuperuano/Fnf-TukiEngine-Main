@@ -29,7 +29,7 @@ class MainMenuState extends MusicBeatState
 	#if !switch
 	var optionShit:Array<String> = ['story mode', 'freeplay', 'options', 'credits'];
 	#else
-	var optionShit:Array<String> = ['story mode', 'freeplay', 'options', 'credits', 'music'];
+	var optionShit:Array<String> = ['story mode', 'freeplay', 'options', 'credits'];
 	#end
 
 	var magenta:FlxSprite;
@@ -194,6 +194,11 @@ class MainMenuState extends MusicBeatState
 			}
 		}
 
+		if (FlxG.keys.pressed.R && FlxG.keys.pressed.I && FlxG.keys.pressed.P)
+		{
+			FlxG.switchState(new CharSelect());
+		}
+
 		super.update(elapsed);
 
 		menuItems.forEach(function(spr:FlxSprite)
@@ -203,7 +208,7 @@ class MainMenuState extends MusicBeatState
 
 		if (FlxG.keys.justPressed.SEVEN)
 			{
-				LoadingState.loadAndSwitchState(new ChartingState(), false);
+				LoadingState.loadAndSwitchState(new ChartingState());
 			}
 
 		if (FlxG.keys.justPressed.EIGHT)
