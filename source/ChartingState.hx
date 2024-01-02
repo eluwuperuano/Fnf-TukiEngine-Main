@@ -2004,17 +2004,8 @@ class ChartingState extends MusicBeatState
 
 	private function saveEvents()
 	{
-		var events:Array<SwagSection> = [];
-		for (sec in 0..._song.notes.length) {
-			if(_song.notes[sec] == null) continue;
-
-			var arrayNotes:Array<Dynamic> = [];
-			for (i in 0..._song.notes[sec].sectionNotes.length) {
-				var note:Array<Dynamic> = _song.notes[sec].sectionNotes[i];
-				if(note != null && note[1] < 0) {
-					arrayNotes.push(note);
-				}
-			}
+		return FlxSort.byValues(FlxSort.ASCENDING, Obj1[0], Obj2[0]);
+	}
 
 			var sex:SwagSection = {
 				sectionNotes: arrayNotes,
