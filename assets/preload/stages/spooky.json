@@ -1,7 +1,7 @@
 {
 	"directory": "week2",
 	"defaultZoom": 1.05,
-	"isHallowenLevel": true,
+	"isHallowenLevel": false,
 	"ispixelStage": false,
 
 	"boyfriend": [770, 100],

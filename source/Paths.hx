@@ -17,6 +17,7 @@ import openfl.geom.Rectangle;
 import openfl.system.System;
 import openfl.utils.AssetType;
 import openfl.utils.Assets as OpenFlAssets;
+import hscript.Expr;
 
 using StringTools;
 
@@ -27,6 +28,8 @@ import sys.io.File;
 
 class Paths
 {
+	public static var curSelectedMod:String = null;
+
 	inline public static var SOUND_EXT = #if web "mp3" #else "ogg" #end;
 	inline public static var VIDEO_EXT = "mp4";
 
@@ -112,8 +115,9 @@ class Paths
 		currentLevel = name.toLowerCase();
 	}
 
-	public static function getPath(file:String, type:AssetType, ?library:Null<String> = null)
+	public static function getPath(file:String, type:AssetType, ?library:Null<String> = null, forceLibrary:Bool = false)
 	{
+		if (!forceLibrary)
 		if (library != null)
 			return getLibraryPath(file, library);
 
@@ -169,6 +173,10 @@ class Paths
 	inline static public function json(key:String, ?library:String)
 	{
 		return getPath('data/$key.json', TEXT, library);
+	}
+
+	inline static public function hx(key:String, ?library:String) {
+		return getPath('$key.hx', TEXT, library);
 	}
 
 	inline static public function shaderFragment(key:String, ?library:String)
@@ -383,15 +391,11 @@ class Paths
 	}
 
 	public static var currentTrackedSounds:Map<String, Sound> = [];
-
-	public static function returnSound(path:String, key:String, ?library:String)
-	{
+	public static function returnSound(path:String, key:String, ?library:String) {
 		#if MODS_ALLOWED
 		var file:String = modsSounds(path, key);
-		if (FileSystem.exists(file))
-		{
-			if (!currentTrackedSounds.exists(file))
-			{
+		if(FileSystem.exists(file)) {
+			if (!currentTrackedSounds.exists(file)) {
 				currentTrackedSounds.set(file, Sound.fromFile(file));
 			}
 			localTrackedAssets.push(key);
@@ -402,18 +406,17 @@ class Paths
 		var gottenPath:String = getPath('$path/$key.$SOUND_EXT', SOUND, library);
 		gottenPath = gottenPath.substring(gottenPath.indexOf(':') + 1, gottenPath.length);
 		// trace(gottenPath);
-		if (!currentTrackedSounds.exists(gottenPath))
-			#if MODS_ALLOWED
+		if(!currentTrackedSounds.exists(gottenPath))
+		#if MODS_ALLOWED
 			currentTrackedSounds.set(gottenPath, Sound.fromFile('./' + gottenPath));
-			#else
-			{
-				var folder:String = '';
-				if (path == 'songs')
-					folder = 'songs:';
+		#else
+		{
+			var folder:String = '';
+			if (path == 'songs') folder = 'songs:';
 
-				currentTrackedSounds.set(gottenPath, OpenFlAssets.getSound(folder + getPath('$path/$key.$SOUND_EXT', SOUND, library)));
-			}
-			#end
+			currentTrackedSounds.set(gottenPath, OpenFlAssets.getSound(folder + getPath('$path/$key.$SOUND_EXT', SOUND, library)));
+		}
+		#end
 		localTrackedAssets.push(gottenPath);
 		return currentTrackedSounds.get(gottenPath);
 	}
@@ -540,4 +543,26 @@ class Paths
 		return list;
 	}
 	#end
+
+    public static function getExpressionFromPath(path:String, critical:Bool = false):hscript.Expr {
+        var parser = new hscript.Parser();
+		parser.allowTypes = true;
+        var ast:Expr = null;
+		try {
+			var cachePath = path.toLowerCase();
+			var fileData = FileSystem.stat(path);
+			#if sys
+			ast = parser.parseString(sys.io.File.getContent(path));
+			#else
+			trace("no sys support");
+			#end
+		} catch(ex) {
+			trace(ex);
+            var exThingy = Std.string(ex);
+            var line = parser.line;
+            if (!openfl.Lib.application.window.fullscreen) openfl.Lib.application.window.alert('Failed to parse the file located at "$path".\r\n$exThingy at $line');
+            trace('Failed to parse the file located at "$path".\r\n$exThingy at $line');
+		}
+        return ast;
+    }
 }

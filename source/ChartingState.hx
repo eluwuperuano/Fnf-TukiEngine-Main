@@ -203,9 +203,9 @@ class ChartingState extends MusicBeatState
 		// sections = _song.notes;
 
 		currentSongName = Paths.formatToSongPath(_song.song);
-		loadAudioBuffer();
-		reloadGridLayer();
+		//loadAudioBuffer();
 		loadSong();
+		reloadGridLayer();
 		Conductor.changeBPM(_song.bpm);
 		Conductor.mapBPMChanges(_song);
 
@@ -299,7 +299,6 @@ class ChartingState extends MusicBeatState
 		check_voices.callback = function()
 		{
 			_song.needsVoices = check_voices.checked;
-			trace('CHECKED!');
 		};
 
 		var saveButton:FlxButton = new FlxButton(110, 8, "Save", function()
@@ -478,7 +477,7 @@ class ChartingState extends MusicBeatState
 					var path = haxe.io.Path.join([directory, file]);
 					if (!FileSystem.isDirectory(path) && file.endsWith('.json')) {
 						var stageToCheck:String = file.substr(0, file.length - 5);
-						if(!stageToCheck.endsWith('-OBJS') && !tempMap.exists(stageToCheck)) {
+						if(/*!stageToCheck.endsWith('-OBJS') && */!tempMap.exists(stageToCheck)) {
 							tempMap.set(stageToCheck, true);
 							stages.push(stageToCheck);
 						}
@@ -1355,7 +1354,7 @@ class ChartingState extends MusicBeatState
 		reloadGridLayer();
 	}
 
-	function loadAudioBuffer() {
+	/*function loadAudioBuffer() {
 		audioBuffers[0] = null;
 		#if MODS_ALLOWED
 		if(FileSystem.exists(Paths.mods('songs/' + currentSongName + '/Inst.ogg'))) {
@@ -1386,7 +1385,7 @@ class ChartingState extends MusicBeatState
 		#if MODS_ALLOWED
 		}
 		#end
-	}
+	}*/
 
 	function reloadGridLayer() {
 		gridLayer.clear();
@@ -1994,7 +1993,7 @@ class ChartingState extends MusicBeatState
 			"song": _song
 		};
 
-		var data:String = Json.stringify(json, "\t");
+		var data:String = Json.stringify(json, "\n");
 
 		if ((data != null) && (data.length > 0))
 		{

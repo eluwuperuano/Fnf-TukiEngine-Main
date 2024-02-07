@@ -1,5 +1,9 @@
 package;
 //import flixel.system.FlxSound;
+import lime.app.Application;
+import hscript.Interp;
+import flixel.tweens.FlxTween;
+import openfl.display.Stage;
 import flixel.FlxState;
 import haxe.Json;
 import flixel.util.FlxTimer;
@@ -334,103 +338,106 @@ class Stages extends MusicBeatState{
 
 				var fgTank3:BGSprite = new BGSprite('tank3', 1300, 1200, 3.5, 2.5, ['fg']);
 				foregroundSprites.add(fgTank3);
+				
 			default:
-				//Debug.logInfo('Generating character (${curCharacter}) from JSON data...');
-				var characterPath:String = 'stages/' + curStage + '-OBJS.json';
-
-				#if MODS_ALLOWED
-				var path:String = Paths.modFolders(characterPath);
-				if (!FileSystem.exists(path))
-				{
-					path = Paths.getPreloadPath(characterPath);
-				}
-
-				if (!FileSystem.exists(path))
-				#else
-				var path:String = Paths.getPreloadPath(characterPath);
-				if (!Assets.exists(path))
-				#end
-				{
-					path = Paths.getPreloadPath('stages/' + DEFAULT_STAGE + '-OBJS.json'); //If a character couldn't be found, change him to BF just to prevent a crash
-				}
-
-				#if MODS_ALLOWED
-				var jsonData = File.getContent(path);
-				#else
-				// Load the data from JSON and cast it to a struct we can easily read.
-				var jsonData = Assets.getText(path);
-				#end
-				/*if (jsonData == null)
-				{
-					Debug.logError('Failed to parse JSON data for character ${curCharacter}');
-					return;
-				}*/
-		
-				data = cast Json.parse(jsonData);
-
-				if (data.stagesobjs != null && data.stagesobjs.length > 0)
-				{
-					for (allobjs in data.stagesobjs)
+					//Debug.logInfo('Generating character (${curCharacter}) from JSON data...');
+					var characterPath:String = 'stages/' + curStage + '-OBJS.json';
+	
+					#if MODS_ALLOWED
+					var path:String = Paths.modFolders(characterPath);
+					if (!FileSystem.exists(path))
 					{
-
-						obj = new FlxSprite(allobjs.objXY[0], allobjs.objXY[1]);
-		
-						if (allobjs.animationsArray != null && allobjs.animationsArray.length > 0)
-						{
-							var spriteType = "sparrow";
-					
-							#if MODS_ALLOWED
-							var modTxtToFind:String = Paths.modsTxt(allobjs.imageName);
-							var txtToFind:String = Paths.getPath('images/' + allobjs.imageName + '.txt', TEXT);
-			
-							// var modTextureToFind:String = Paths.modFolders("images/"+json.image);
-							// var textureToFind:String = Paths.getPath('images/' + json.image, new AssetType();
-			
-							if (FileSystem.exists(modTxtToFind) || FileSystem.exists(txtToFind) || Assets.exists(txtToFind))
-							#else
-							if (Assets.exists(Paths.getPath('images/' + allobjs.imageName + '.txt', TEXT)))
-							#end	
-							{
-								spriteType = "packer";
-							}
-
-							switch (spriteType){
-								
-								case "packer":
-									obj.frames = Paths.getPackerAtlas(allobjs.imageName, allobjs.objDirectory);
-								
-								case "sparrow":
-									obj.frames = Paths.getSparrowAtlas(allobjs.imageName, allobjs.objDirectory);
-							}
-							if(allobjs.animationsArray != null && allobjs.animationsArray.length > 0)
-							{
-								for (anim in allobjs.animationsArray)
-								{
-									if (anim.indices != null && anim.indices.length > 0)
-									{
-										obj.animation.addByIndices(anim.nameAnim, anim.animation, anim.indices, "", anim.objfps, anim.objLoop);
-									} else {
-										obj.animation.addByPrefix(anim.nameAnim, anim.animation, anim.objfps, anim.objLoop);
-									}
-								}	
-							}
-
-							//obj.animation.play('idle');
-						}else{
-							obj.loadGraphic(Paths.image(allobjs.imageName, allobjs.objDirectory));
-							obj.active = false;
-						}
-						obj.flipX = allobjs.objFlipX;
-						obj.scrollFactor.set(allobjs.objScroll[0], allobjs.objScroll[1]);
-						obj.antialiasing = allobjs.objAntianaliting;
-						if (allobjs.objScale != 1)
-						{
-							obj.setGraphicSize(Std.int(obj.width * allobjs.objScale));
-							obj.updateHitbox();
-						}
-						add(obj);
+						path = Paths.getPreloadPath(characterPath);
 					}
-				}
+	
+					if (!FileSystem.exists(path))
+					#else
+					var path:String = Paths.getPreloadPath(characterPath);
+					if (!Assets.exists(path))
+					#end
+					{
+						path = Paths.getPreloadPath('stages/' + DEFAULT_STAGE + '-OBJS.json'); //If a character couldn't be found, change him to BF just to prevent a crash
+					}
+	
+					#if MODS_ALLOWED
+					var jsonData = File.getContent(path);
+					#else
+					// Load the data from JSON and cast it to a struct we can easily read.
+					var jsonData = Assets.getText(path);
+					#end
+					/*if (jsonData == null)
+					{
+						Debug.logError('Failed to parse JSON data for character ${curCharacter}');
+						return;
+					}*/
+			
+					data = cast Json.parse(jsonData);
+	
+					if (data.stagesobjs != null && data.stagesobjs.length > 0)
+					{
+						for (allobjs in data.stagesobjs)
+						{
+	
+							obj = new FlxSprite(allobjs.objXY[0], allobjs.objXY[1]);
+			
+							if (allobjs.animationsArray != null && allobjs.animationsArray.length > 0)
+							{
+								var spriteType = "sparrow";
+						
+								#if MODS_ALLOWED
+								var modTxtToFind:String = Paths.modsTxt(allobjs.imageName);
+								var txtToFind:String = Paths.getPath('images/' + allobjs.imageName + '.txt', TEXT);
+				
+								// var modTextureToFind:String = Paths.modFolders("images/"+json.image);
+								// var textureToFind:String = Paths.getPath('images/' + json.image, new AssetType();
+				
+								if (FileSystem.exists(modTxtToFind) || FileSystem.exists(txtToFind) || Assets.exists(txtToFind))
+								#else
+								if (Assets.exists(Paths.getPath('images/' + allobjs.imageName + '.txt', TEXT)))
+								#end	
+								{
+									spriteType = "packer";
+								}
+	
+								switch (spriteType){
+									
+									case "packer":
+										obj.frames = Paths.getPackerAtlas(allobjs.imageName, allobjs.objDirectory);
+									
+									case "sparrow":
+										obj.frames = Paths.getSparrowAtlas(allobjs.imageName, allobjs.objDirectory);
+								}
+								if(allobjs.animationsArray != null && allobjs.animationsArray.length > 0)
+								{
+									for (anim in allobjs.animationsArray)
+									{
+										if (anim.indices != null && anim.indices.length > 0)
+										{
+											obj.animation.addByIndices(anim.nameAnim, anim.animation, anim.indices, "", anim.objfps, anim.objLoop);
+										} else {
+											obj.animation.addByPrefix(anim.nameAnim, anim.animation, anim.objfps, anim.objLoop);
+										}
+									}	
+								}
+	
+								//obj.animation.play('idle');
+							}else{
+								obj.loadGraphic(Paths.image(allobjs.imageName, allobjs.objDirectory));
+								obj.active = false;
+							}
+							obj.flipX = allobjs.objFlipX;
+							obj.scrollFactor.set(allobjs.objScroll[0], allobjs.objScroll[1]);
+							obj.antialiasing = allobjs.objAntianaliting;
+							if (allobjs.objScale != 1)
+							{
+								obj.setGraphicSize(Std.int(obj.width * allobjs.objScale));
+								obj.updateHitbox();
+							}
+							add(obj);
+						}
+					}
+				
+
 
         }
 
@@ -555,6 +562,7 @@ class Stages extends MusicBeatState{
 
 	override function beatHit() {
 		super.beatHit();
+
 		switch (curStage)
 		{
 			case 'school':
@@ -580,25 +588,13 @@ class Stages extends MusicBeatState{
 				if (!trainMoving)
 					trainCooldown += 1;
 
-				if (curBeat % 4 == 0)
-				{
-					curLight = FlxG.random.int(0, phillyLightsColors.length - 1, [curLight]);
-					light.color = phillyLightsColors[curLight];
-					light.alpha = 1;
-
-					if (eventlight)
+					if (curBeat % 4 == 0)
 					{
-
-						if (curStage == 'philly')
-						{
-						}	
-					} else {
-
-						if (curStage == 'philly')
-						{
-						}	
+						curLight = FlxG.random.int(0, phillyLightsColors.length - 1, [curLight]);
+						//light.color = phillyLightsColors[curLight];
+						FlxTween.color(light, 1, phillyLightsColors[curLight-1], phillyLightsColors[curLight]);
+						light.alpha = 1;
 					}
-				}
 
 				if (curBeat % 8 == 4 && FlxG.random.bool(30) && !trainMoving && trainCooldown > 8)
 				{
@@ -619,6 +615,13 @@ class Stages extends MusicBeatState{
 				}	
 		}
 		
+	}
+
+	function beatnement(P:Int, O:String) {
+		if (curBeat % P == 0)
+		{
+			obj.animation.play(O);
+		}
 	}
 
 	public function lightningStrikeShit():Void

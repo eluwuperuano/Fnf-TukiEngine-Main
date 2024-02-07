@@ -22,6 +22,8 @@ class GameOverSubstate extends MusicBeatSubstate
 	public static var loopSoundName:String = 'gameOver';
 	public static var endSoundName:String = 'gameOverEnd';
 
+	public static var instance:GameOverSubstate;
+
 	public function new(x:Float, y:Float)
 	{
 		var daStage = PlayState.curStage;

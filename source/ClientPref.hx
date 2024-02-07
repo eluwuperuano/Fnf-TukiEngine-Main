@@ -40,8 +40,8 @@ class ClientPref
 	public static var noteRainbow:Bool = true;
 	public static var customArrowColors_allChars:Bool = false;
 	public static var changesides:Bool = false;
+	public static var scoreMenuComplicated:Bool = true;
 
-	public static var opponentStrums:Bool = false;
 
 	public static function loadDefaultKeys()
 	{
@@ -66,7 +66,7 @@ class ClientPref
 		FlxG.save.data.customArrowColors_allChars = customArrowColors_allChars;
 		FlxG.save.data.changesides = changesides;
 		FlxG.save.data.camZooms = camZooms;
-		FlxG.save.data.opponentStrums = opponentStrums;
+		FlxG.save.data.scoreMenuComplicated = scoreMenuComplicated;
 	}
 
 	public static function loadPrefs()
@@ -115,10 +115,10 @@ class ClientPref
 		{
 			changesides = FlxG.save.data.changesides;
 		}
-		if (FlxG.save.data.opponentStrums != null)
+		if (FlxG.save.data.scoreMenuComplicated != null)
 		{
-			opponentStrums = FlxG.save.data.opponentStrums;
-		}	
+			scoreMenuComplicated = FlxG.save.data.scoreMenuComplicated;
+		}
 	}
 
 	public static function reloadControls()

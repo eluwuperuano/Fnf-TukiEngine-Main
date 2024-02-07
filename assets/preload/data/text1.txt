@@ -1,0 +1,8 @@
+//example
+
+class text1 {
+	static function main()
+	{
+	trace("una cosa chistosa que puedes hacer");
+	}
+}

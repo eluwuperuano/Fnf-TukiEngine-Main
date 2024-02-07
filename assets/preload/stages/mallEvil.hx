@@ -1,0 +1,18 @@
+function create()
+{
+
+    var bg:BGSprite = new BGSprite('christmas/evilBG', -400, -500, 0.2, 0.2);
+    bg.setGraphicSize(Std.int(bg.width * 0.8));
+    bg.updateHitbox();
+    add(bg);
+
+    var evilTree:BGSprite = new BGSprite('christmas/evilTree', 300, -300, 0.2, 0.2);
+    add(evilTree);
+
+    var evilSnow:BGSprite = new BGSprite('christmas/evilSnow', -200, 700);
+    add(evilSnow);
+    
+    add(gfGroup);
+    add(dadGroup);
+    add(boyfriendGroup);
+}    

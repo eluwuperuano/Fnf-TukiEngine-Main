@@ -80,9 +80,11 @@ class Note extends FlxSprite
 		isSustainNote = sustainNote;
 		if(!inEditor) this.strumTime += ClientPref.noteOffset;
 
-		x += 42 + 50;
+		/*x += 42 + 50;
 		// MAKE SURE ITS DEFINITELY OFF SCREEN?
-		y -= 2000;
+		y -= 2000;*/
+
+		setNotePos(PlayState.STRUM_X + 50, 2000);
 		this.strumTime = strumTime;
 
 		this.noteData = noteData;
@@ -357,6 +359,11 @@ class Note extends FlxSprite
 			if (alpha > 0.3)
 				alpha = 0.3;
 		}
+	}
+
+	function setNotePos(isx:Int, isy:Int) {
+		x += isx;
+		y -= isy;
 	}
 
 	/*function set_noteType(value:String):String {

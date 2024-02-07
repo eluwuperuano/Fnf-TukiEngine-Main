@@ -22,7 +22,7 @@ class MainMenuState extends MusicBeatState
 {
 	var curSelected:Int = 0;
 
-	var tukiengineVer = "V 2 . 0";
+	var tukiengineVer = "V 4 . 0";
 
 	var menuItems:FlxTypedGroup<FlxSprite>;
 
@@ -41,7 +41,8 @@ class MainMenuState extends MusicBeatState
 
 		if (!FlxG.sound.music.playing)
 		{
-			FlxG.sound.playMusic('assets/music/freakyMenu' + TitleState.soundExt);
+			//FlxG.sound.playMusic('assets/music/freakyMenu' + TitleState.soundExt);
+			FlxG.sound.playMusic(Paths.music('freakyMenu'));
 		}
 
 		persistentUpdate = persistentDraw = true;
@@ -192,11 +193,6 @@ class MainMenuState extends MusicBeatState
 					});
 				}
 			}
-		}
-
-		if (FlxG.keys.pressed.R && FlxG.keys.pressed.I && FlxG.keys.pressed.P)
-		{
-			FlxG.switchState(new CharSelect());
 		}
 
 		super.update(elapsed);
