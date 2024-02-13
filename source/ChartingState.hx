@@ -893,17 +893,15 @@ class ChartingState extends MusicBeatState
 	}
 
 	function generateSong() {
-		FlxG.sound.playMusic(Paths.inst(currentSongName), 0.6, false);
+		FlxG.sound.playMusic(Paths.inst(currentSongName), 0.6/*, false*/);
 		if (instVolume != null) FlxG.sound.music.volume = instVolume.value;
 		if (check_mute_inst != null && check_mute_inst.checked) FlxG.sound.music.volume = 0;
 
 		FlxG.sound.music.onComplete = function()
 		{
-			generateSong();
 			FlxG.sound.music.pause();
 			Conductor.songPosition = 0;
 			if(vocals != null) {
-				vocals.play();
 				vocals.pause();
 				vocals.time = 0;
 			}
@@ -911,6 +909,7 @@ class ChartingState extends MusicBeatState
 			curSection = 0;
 			updateGrid();
 			updateSectionUI();
+			vocals.play();
 		};
 	}
 

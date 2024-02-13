@@ -115,9 +115,8 @@ class Paths
 		currentLevel = name.toLowerCase();
 	}
 
-	public static function getPath(file:String, type:AssetType, ?library:Null<String> = null, forceLibrary:Bool = false)
+	public static function getPath(file:String, type:AssetType, ?library:Null<String> = null)
 	{
-		if (!forceLibrary)
 		if (library != null)
 			return getLibraryPath(file, library);
 
@@ -230,6 +229,7 @@ class Paths
 		#else
 		var songKey:String = '${formatToSongPath(song)}/Voices';
 		var voices = returnSound('songs', songKey);
+		trace ('$songKey, $voices');
 		return voices;
 		#end
 	}
@@ -241,6 +241,7 @@ class Paths
 		#else
 		var songKey:String = '${formatToSongPath(song)}/Inst';
 		var inst = returnSound('songs', songKey);
+		trace('$songKey, $inst');
 		return inst;
 		#end
 	}
@@ -343,8 +344,7 @@ class Paths
 		#end
 	}
 
-	inline static public function formatToSongPath(path:String)
-	{
+	inline static public function formatToSongPath(path:String) {
 		var invalidChars = ~/[~&\\;:<>#]/;
 		var hideChars = ~/[.,'"%?!]/;
 
@@ -395,7 +395,7 @@ class Paths
 		#if MODS_ALLOWED
 		var file:String = modsSounds(path, key);
 		if(FileSystem.exists(file)) {
-			if (!currentTrackedSounds.exists(file)) {
+			if(!currentTrackedSounds.exists(file)) {
 				currentTrackedSounds.set(file, Sound.fromFile(file));
 			}
 			localTrackedAssets.push(key);
@@ -412,7 +412,7 @@ class Paths
 		#else
 		{
 			var folder:String = '';
-			if (path == 'songs') folder = 'songs:';
+			if(path == 'songs') folder = 'songs:';
 
 			currentTrackedSounds.set(gottenPath, OpenFlAssets.getSound(folder + getPath('$path/$key.$SOUND_EXT', SOUND, library)));
 		}
@@ -442,8 +442,7 @@ class Paths
 		return modFolders('videos/' + key + '.' + VIDEO_EXT);
 	}
 
-	inline static public function modsSounds(path:String, key:String)
-	{
+	inline static public function modsSounds(path:String, key:String) {
 		return modFolders(path + '/' + key + '.' + SOUND_EXT);
 	}
 
@@ -462,22 +461,19 @@ class Paths
 		return modFolders('images/' + key + '.txt');
 	}
 
-	static public function modFolders(key:String)
-	{
-		if (currentModDirectory != null && currentModDirectory.length > 0)
-		{
+	static public function modFolders(key:String) {
+		if(currentModDirectory != null && currentModDirectory.length > 0) {
 			var fileToCheck:String = mods(currentModDirectory + '/' + key);
-			if (FileSystem.exists(fileToCheck))
-			{
+			if(FileSystem.exists(fileToCheck)) {
 				return fileToCheck;
 			}
 		}
 
-		for (mod in getGlobalMods())
-		{
+		for(mod in getGlobalMods()){
 			var fileToCheck:String = mods(mod + '/' + key);
-			if (FileSystem.exists(fileToCheck))
+			if(FileSystem.exists(fileToCheck))
 				return fileToCheck;
+
 		}
 		return 'mods/' + key;
 	}
