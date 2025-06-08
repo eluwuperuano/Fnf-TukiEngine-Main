@@ -22,7 +22,7 @@ class MainMenuState extends MusicBeatState
 {
 	var curSelected:Int = 0;
 
-	var tukiengineVer = "V 4 . 0";
+	var tukiengineVer = "V 4 . 1";
 
 	var menuItems:FlxTypedGroup<FlxSprite>;
 
